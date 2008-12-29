@@ -40,18 +40,14 @@
 require_once 'PEAR/PackageFileManager2.php';
 PEAR::setErrorHandling(PEAR_ERROR_DIE);
 
-$api_version     = '0.1.0';
+$api_version     = '0.1.1';
 $api_state       = 'alpha';
 
-$release_version = '0.1.0';
+$release_version = '0.1.1';
 $release_state   = 'alpha';
 $release_notes   =
-    "Redeveloped version of Services_Akismet. Changes include:\n" .
-    " * BC break to use HTTP_Request2 (Bug #15069).\n" .
-    " * Added shortcut constructor for comment class.\n" .
-    " * Added ability to set API endpoint (Bug #15387).\n" .
-    " * Fluent interface for base class and comment.\n" .
-    " * Enhanced exceptions.\n";
+    " * Fix setting HTTP referer in comment constructor.\n" .
+    " * Update unit tests to use mock HTTP objects.\n";
 
 $description =
     "This package provides an object-oriented interface to the Akismet REST " .
