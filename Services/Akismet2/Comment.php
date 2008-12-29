@@ -214,7 +214,7 @@ class Services_Akismet2_Comment
         }
 
         if (array_key_exists('referrer', $fields)) {
-            $this->setReferrer($fields['referrer']);
+            $this->setHttpReferer($fields['referrer']);
         }
 
         if (array_key_exists('type', $fields)) {
