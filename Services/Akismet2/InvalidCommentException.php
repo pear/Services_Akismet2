@@ -45,6 +45,11 @@
  */
 require_once 'PEAR/Exception.php';
 
+/**
+ * Akismet comment class
+ */
+require_once 'Services/Akismet2/Comment.php';
+
 // {{{ class Services_Akismet2_InvalidApiKeyException
 
 /**
@@ -60,6 +65,46 @@ require_once 'PEAR/Exception.php';
  */
 class Services_Akismet2_InvalidCommentException extends PEAR_Exception
 {
+    // {{{ private class properties
+
+    /**
+     * The invalid comment
+     *
+     * @var Services_Akismet2_Comment
+     */
+    private $_comment;
+
+    // }}}
+    // {{{ __construct()
+
+    /**
+     * Creates a new invalid comment exception
+     *
+     * @param string                    $message the error message.
+     * @param integer                   $code    the error code.
+     * @param Services_Akismet2_Comment $comment the invalid comment.
+     */
+    public function __construct($message, $code,
+        Services_Akismet2_Comment $comment)
+    {
+        parent::__construct($message, $code);
+        $this->_comment = $comment;
+    }
+
+    // }}}
+    // {{{ public function getComment()
+
+    /**
+     * Gets the invalid comment
+     *
+     * @return Services_Akismet2_Comment the invalid comment.
+     */
+    public function getComment()
+    {
+        return $this->_comment;
+    }
+
+    // }}}
 }
 
 // }}}
