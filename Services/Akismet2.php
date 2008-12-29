@@ -391,7 +391,7 @@ class Services_Akismet2
      *
      * @param Services_Akismet2_Comment $comment the comment to submit as spam.
      *
-     * @return void
+     * @return Services_Akismet2 the Akismet API object.
      *
      * @throws Services_Akismet2_HttpException if there is an error
      *         communicating with the Akismet API server.
@@ -405,6 +405,8 @@ class Services_Akismet2
         $params['blog'] = $this->blogUri;
 
         $this->sendRequest('submit-spam', $params);
+
+        return $this;
     }
 
     // }}}
@@ -419,7 +421,7 @@ class Services_Akismet2
      * @param Services_Akismet2_Comment $comment the comment that is
      *                                          <em>not</em> spam.
      *
-     * @return void
+     * @return Services_Akismet2 the Akismet API object.
      *
      * @throws Services_Akismet2_HttpException if there is an error
      *         communicating with the Akismet API server.
@@ -433,6 +435,8 @@ class Services_Akismet2
         $params['blog'] = $this->blogUri;
 
         $this->sendRequest('submit-ham', $params);
+
+        return $this;
     }
 
     // }}}
@@ -443,11 +447,13 @@ class Services_Akismet2
      *
      * @param HTTP_Request2 $request the HTTP request object to use.
      *
-     * @return void
+     * @return Services_Akismet2 the Akismet API object.
      */
     public function setRequest(HTTP_Request2 $request)
     {
         $this->request = $request;
+
+        return $this;
     }
 
     // }}}
