@@ -3,16 +3,19 @@
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
 /**
- * Services_Akismet2 is a package to use Akismet spam-filtering from PHP
+ * Services_Akismet2 is a package to use Akismet spam-filtering API from PHP
  *
  * This package provides an object-oriented interface to the Akismet REST
- * API. Akismet is used to detect and to filter spam comments posted on
- * weblogs. Though the use of Akismet is not specific to Wordpress, you will
- * need a Wordpress API key from {@link http://wordpress.com} to use this
- * package.
+ * API. The Akismet API is used to detect and to filter spam comments posted on
+ * weblogs.
  *
- * Akismet is free for personal use and a license may be purchased for
- * commercial or high-volume applications.
+ * There are several anti-spam service providers that use the Akismet API. To
+ * use the API, you will need an API key from such a provider. Example
+ * providers include {@link http://wordpress.com Wordpress} and
+ * {@link http://antispam.typepad.com/ TypePad}.
+ *
+ * Most services are free for personal or low-volume use, and offer licensing
+ * for commercial or high-volume applications.
  *
  * This package is derived from the miPHP Akismet class written by Bret Kuhns
  * for use in PHP 4. This package requires PHP 5.2.1.
@@ -82,7 +85,7 @@ require_once 'HTTP/Request2.php';
  * Example usage:
  * <code>
  *
- * /**
+ * /*
  *  * Handling user-posted comments
  *  {@*}
  *
@@ -113,7 +116,7 @@ require_once 'HTTP/Request2.php';
  *         $commentException->getMessage();
  * }
  *
- * /**
+ * /*
  *  * Submitting a comment as known spam
  *  {@*}
  *
@@ -138,7 +141,7 @@ require_once 'HTTP/Request2.php';
  *         $commentException->getMessage();
  * }
  *
- * /**
+ * /*
  *  * Submitting a comment as a false positive
  *  {@*}
  *
