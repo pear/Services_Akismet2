@@ -64,7 +64,7 @@ $description =
 $package = new PEAR_PackageFileManager2();
 
 $package->setOptions(array(
-    'filelistgenerator'     => 'file',
+    'filelistgenerator'     => 'cvs',
     'simpleoutput'          => true,
     'baseinstalldir'        => '/',
     'packagedirectory'      => './',
@@ -75,10 +75,6 @@ $package->setOptions(array(
     ),
     'ignore'                => array(
         'package.php',
-        'package-2.0.xml',
-        '*.tgz',
-        'build.sh',
-        'tests/config.php'
     ),
 ));
 
