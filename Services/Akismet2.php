@@ -516,6 +516,8 @@ class Services_Akismet2
     /**
      * Validates the API key before performing a request
      *
+     * @return void
+     *
      * @throws Services_Akismet2_InvalidApiKeyException if the provided
      *         API key is not valid.
      */
