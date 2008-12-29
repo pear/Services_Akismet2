@@ -47,7 +47,7 @@ require_once 'PEAR/Exception.php';
 
 /**
  * THe HTTP request class
- */.
+ */
 require_once 'HTTP/Request2.php';
 
 // {{{ class Services_Akismet2_HttpException
