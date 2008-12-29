@@ -46,7 +46,7 @@ $api_state       = 'alpha';
 $release_version = '0.1.0';
 $release_state   = 'alpha';
 $release_notes   =
-    "Redeveloped version of Services_Akismet. Changes include:\n"
+    "Redeveloped version of Services_Akismet. Changes include:\n" .
     " * BC break to use HTTP_Request2 (Bug #15069).\n" .
     " * Added shortcut constructor for comment class.\n" .
     " * Added ability to set API endpoint (Bug #15387).\n" .
