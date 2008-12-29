@@ -45,6 +45,11 @@
  */
 require_once 'PEAR/Exception.php';
 
+/**
+ * THe HTTP request class
+ */.
+require_once 'HTTP/Request2.php';
+
 // {{{ class Services_Akismet2_HttpException
 
 /**
@@ -59,6 +64,46 @@ require_once 'PEAR/Exception.php';
  */
 class Services_Akismet2_HttpException extends PEAR_Exception
 {
+    // {{{ private class properties
+
+    /**
+     * The object used to make the request that failed
+     *
+     * @var HTTP_Request2
+     */
+    private $_request;
+
+    // }}}
+    // {{{ __construct()
+
+    /**
+     * Creates a new HTTP error exception
+     *
+     * @param string        $message the error message.
+     * @param integer       $code    the error code.
+     * @param HTTP_Request2 $request the object used to make the request that
+     *                               failed.
+     */
+    public function __construct($message, $code, HTTP_Request2 $request)
+    {
+        parent::__construct($message, $code);
+        $this->_request = $request;
+    }
+
+    // }}}
+    // {{{ public function getRequest()
+
+    /**
+     * Gets the object used to make the HTTP request that failed
+     *
+     * @return HTTP_Request2 the HTTP request object that failed.
+     */
+    public function getRequest()
+    {
+        return $this->_request;
+    }
+
+    // }}}
 }
 
 // }}}
