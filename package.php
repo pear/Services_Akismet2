@@ -46,9 +46,12 @@ $api_state       = 'alpha';
 $release_version = '0.1.0';
 $release_state   = 'alpha';
 $release_notes   =
-    " * BC break to use HTTP_Request2.\n" .
+    "Redeveloped version of Services_Akismet. Changes include:\n"
+    " * BC break to use HTTP_Request2 (Bug #15069).\n" .
     " * Added shortcut constructor for comment class.\n" .
-    " * Added ability to set API endpoint.";
+    " * Added ability to set API endpoint (Bug #15387).\n" .
+    " * Fluent interface for base class and comment.\n" .
+    " * Enhanced exceptions.\n";
 
 $description =
     "This package provides an object-oriented interface to the Akismet REST " .
