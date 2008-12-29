@@ -186,6 +186,8 @@ class Services_Akismet2
      * Defaults to 80.
      *
      * @var integer
+     *
+     * @see Services_Akismet2::setConfig()
      */
     protected $apiPort = 80;
 
@@ -195,6 +197,8 @@ class Services_Akismet2
      * Defaults to 'rest.akismet.com'.
      *
      * @var string
+     *
+     * @see Services_Akismet2::setConfig()
      */
     protected $apiServer = 'rest.akismet.com';
 
@@ -204,6 +208,8 @@ class Services_Akismet2
      * Defaults to '1.1'.
      *
      * @var string
+     *
+     * @see Services_Akismet2::setConfig()
      */
     protected $apiVersion = '1.1';
 
@@ -240,6 +246,16 @@ class Services_Akismet2
      *
      * @param string        $blogUri the URI of the webblog homepage.
      * @param string        $apiKey  the API key to use for Akismet services.
+     * @param array         $config  optional. An associative array of
+     *                               configuration options. Options are:
+     *                               <tt>apiServer</tt>  - the API server to
+     *                                                     use. By default,
+     *                                                     the Akismet API
+     *                                                     server is used.
+     *                               <tt>apiPort</tt>    - the HTTP port on the
+     *                                                     API server to use.
+     *                               <tt>apiVersion</tt> - the API version to
+     *                                                     use.
      * @param HTTP_Request2 $request optional. The HTTP request object to use.
      *                               If not specified, a HTTP request object is
      *                               created automatically.
@@ -253,8 +269,10 @@ class Services_Akismet2
      * @throws PEAR_Exception if the specified HTTP client implementation may
      *         not be used with this PHP installation or if the specified HTTP
      *         client implementation does not exist.
+     *
+     * @see Services_Akismet2::setConfig()
      */
-    public function __construct($blogUri, $apiKey,
+    public function __construct($blogUri, $apiKey, array $config = array(),
         HTTP_Request2 $request = null)
     {
         $this->blogUri = $blogUri;
@@ -267,12 +285,73 @@ class Services_Akismet2
 
         $this->setRequest($request);
 
+        // set options
+        $this->setConfig($config);
+
         // make sure the API key is valid
         if (!$this->isApiKeyValid($this->apiKey)) {
             throw new Services_Akismet2_InvalidApiKeyException('The specified ' .
                 'API key is not valid. Key used was: "' .
                 $this->apiKey . '".', 0, $this->apiKey);
         }
+    }
+
+    // }}}
+    // {{{ setConfig()
+
+    /**
+     * Sets one or more configuration values
+     *
+     * Configuration values are:
+     *
+     * - <tt>apiServer</tt>  - the API server to use. By default, the Akismet
+     *                         API server (owned by Wordpress.com) is used. Set
+     *                         this to use an alternate Akismet API service
+     *                         provider.
+     * - <tt>apiPort</tt>    - the HTTP port to use on the API server.
+     * - <tt>apiVersion</tt> - the API version to use.
+     *
+     * Example usage:
+     * <code>
+     * // sets config using an associative array
+     * $akismet->setConfig(array(
+     *     'apiServer' => 'rest.akismet.com',
+     *     'apiPort'   => 80
+     * ));
+     *
+     * // sets config using fluent interface
+     * $akismet->setConfig('apiServer', 'rest.akismet.com')
+     *     ->setConfig('apiPort', 80);
+     * </code>
+     *
+     * @param string|array $name  config name or an associative array containing
+     *                            configuration name-value pairs.
+     * @param string|null  $value config value. Ignored if <tt>$name</tt> is
+     *                            an array.
+     *
+     * @return Services_Akismet2 the Akismet API object.
+     */
+    public function setConfig($name, $value = null)
+    {
+        if (is_array($name)) {
+            $options = $name;
+        } else {
+            $options = array($name => $value);
+        }
+
+        if (array_key_exists('apiServer', $options)) {
+            $this->apiServer = strval($options['apiServer']);
+        }
+
+        if (array_key_exists('apiPort', $options)) {
+            $this->apiPort = strval($options['apiPort']);
+        }
+
+        if (array_key_exists('apiVersion', $options)) {
+            $this->apiVersion = strval($options['apiVersion']);
+        }
+
+        return $this;
     }
 
     // }}}
