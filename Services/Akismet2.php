@@ -307,7 +307,7 @@ class Services_Akismet2
      *
      * // sets config using fluent interface
      * $akismet->setConfig('apiServer', 'rest.akismet.com')
-     *     ->setConfig('apiPort', 80);
+     *         ->setConfig('apiPort', 80);
      * </code>
      *
      * @param string|array $name  config name or an associative array containing
