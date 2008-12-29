@@ -256,15 +256,8 @@ class Services_Akismet2
      * @param string        $blogUri the URI of the webblog homepage.
      * @param string        $apiKey  the API key to use for Akismet services.
      * @param array         $config  optional. An associative array of
-     *                               configuration options. Options are:
-     *                               <tt>apiServer</tt>  - the API server to
-     *                                                     use. By default,
-     *                                                     the Akismet API
-     *                                                     server is used.
-     *                               <tt>apiPort</tt>    - the HTTP port on the
-     *                                                     API server to use.
-     *                               <tt>apiVersion</tt> - the API version to
-     *                                                     use.
+     *                               configuration options.
+     *                               {@see Services_Akismet2::setConfig()}.
      * @param HTTP_Request2 $request optional. The HTTP request object to use.
      *                               If not specified, a HTTP request object is
      *                               created automatically.
@@ -297,12 +290,12 @@ class Services_Akismet2
      *
      * Configuration values are:
      *
-     * - <tt>apiServer</tt>  - the API server to use. By default, the Akismet
-     *                         API server (owned by Wordpress.com) is used. Set
-     *                         this to use an alternate Akismet API service
-     *                         provider.
-     * - <tt>apiPort</tt>    - the HTTP port to use on the API server.
-     * - <tt>apiVersion</tt> - the API version to use.
+     * - <kbd>apiServer</kbd>  - the API server to use. By default, the Akismet
+     *                           API server (owned by Wordpress.com) is used.
+     *                           Set this to use an alternate Akismet API
+     *                           service provider.
+     * - <kbd>apiPort</kbd>    - the HTTP port to use on the API server.
+     * - <kbd>apiVersion</kbd> - the API version to use.
      *
      * Example usage:
      * <code>
@@ -319,7 +312,7 @@ class Services_Akismet2
      *
      * @param string|array $name  config name or an associative array containing
      *                            configuration name-value pairs.
-     * @param string|null  $value config value. Ignored if <tt>$name</tt> is
+     * @param string|null  $value config value. Ignored if <kbd>$name</kbd> is
      *                            an array.
      *
      * @return Services_Akismet2 the Akismet API object.
