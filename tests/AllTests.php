@@ -13,13 +13,6 @@
  * This test suite follows the PEAR AllTests conventions as documented at
  * {@link http://cvs.php.net/viewvc.cgi/pear/AllTests.php?view=markup}.
  *
- * Note:
- *
- *   These tests require a private API key from Wordpress.com. Enter your API
- *   key in config.php to run these tests. If config.php is missing, these
- *   tests will refusse to run. A sample configuration is provided in the file
- *   config.php.dist.
- *
  * LICENSE:
  *
  * This library is free software; you can redistribute it and/or modify

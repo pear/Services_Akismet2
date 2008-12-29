@@ -10,13 +10,6 @@
  * {@link http://www.phpunit.de/pocket_guide/3.2/en/installation.html manual}
  * for detailed installation instructions.
  *
- * Note:
- *
- *   These tests require a private API key from Wordpress.com. Enter your API
- *   key in config.php to run these tests. If config.php is missing, these
- *   tests will refusse to run. A sample configuration is provided in the file
- *   config.php.dist.
- *
  * LICENSE:
  *
  * This library is free software; you can redistribute it and/or modify
@@ -58,6 +51,20 @@ require_once 'Services/Akismet2.php';
 require_once 'Services/Akismet2/Comment.php';
 
 /**
+ * For mock HTTP responses
+ *
+ * @see http://clockwerx.blogspot.com/2008/11/pear-and-unit-tests-httprequest2.html
+ */
+require_once 'HTTP/Request2.php';
+
+/**
+ * For mock HTTP responses
+ *
+ * @see http://clockwerx.blogspot.com/2008/11/pear-and-unit-tests-httprequest2.html
+ */
+require_once 'HTTP/Request2/Adapter/Mock.php';
+
+/**
  * Base class for testing Services_Akismet2
  *
  * @category  Services
@@ -77,45 +84,11 @@ class Services_Akismet2_TestCase extends PHPUnit_Framework_TestCase
     private $_oldErrorLevel;
 
     // }}}
-    // {{{ protected properties
-
-    /**
-     * @var Services_Akismet2
-     */
-    protected $akismet = null;
-
-    // }}}
     // {{{ setUp()
 
     public function setUp()
     {
-        $configFilename = dirname(__FILE__).'/config.php';
-
-        if (!file_exists($configFilename)) {
-            $this->markTestSkipped('Unit test configuration is missing. ' .
-                'Please read the documentation in TestCase.php and create a ' .
-                'configuration file. See the configuration in ' .
-                '\'config.php.dist\' for an example.');
-        }
-
-        include $configFilename;
-
-        if (   !isset($GLOBALS['Services_Akismet2_Unittest_Config'])
-            || !is_array($GLOBALS['Services_Akismet2_Unittest_Config'])
-            || !isset($GLOBALS['Services_Akismet2_Unittest_Config']['blogUri'])
-            || !isset($GLOBALS['Services_Akismet2_Unittest_Config']['apiKey'])
-        ) {
-            $this->markTestSkipped('Unit test configuration is incorrect. ' .
-                'Please read the documentation in TestCase.php and fix the ' .
-                'configuration file. See the configuration in ' .
-                '\'config.php.dist\' for an example.');
-        }
-
         $this->_oldErrorLevel = error_reporting(E_ALL | E_STRICT);
-
-        $this->akismet = new Services_Akismet2(
-            $GLOBALS['Services_Akismet2_Unittest_Config']['blogUri'],
-            $GLOBALS['Services_Akismet2_Unittest_Config']['apiKey']);
     }
 
     // }}}
@@ -123,8 +96,15 @@ class Services_Akismet2_TestCase extends PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
-        unset($this->akismet);
         error_reporting($this->_oldErrorLevel);
+    }
+
+    // }}}
+    // {{{ getAkismet()
+
+    protected function getAkismet(HTTP_Request2 $request = null)
+    {
+        return new Services_Akismet2('foo', 'bar', array(), $request);
     }
 
     // }}}
@@ -134,28 +114,54 @@ class Services_Akismet2_TestCase extends PHPUnit_Framework_TestCase
 
     public function testIsSpam()
     {
-        $spamComment = new Services_Akismet2_Comment();
-        $spamComment->setAuthor('viagra-test-123');
-        $spamComment->setAuthorEmail('test@example.com');
-        $spamComment->setAuthorUri('http://example.com/');
-        $spamComment->setContent('Spam, I am.');
-        $spamComment->setUserIp('127.0.0.1');
-        $spamComment->setUserAgent('Services_Akismet2 unit tests');
-        $spamComment->setHttpReferer('http://example.com/');
+        $adapter = new HTTP_Request2_Adapter_Mock();
 
-        $isSpam = $this->akismet->isSpam($spamComment);
+        // set up HTTP response for API key verification
+        $response = new HTTP_Request2_Response('HTTP/1.1 200 OK');
+        $response->appendBody('valid');
+        $adapter->addResponse($response);
+
+        // set up HTTP response for spam
+        $response = new HTTP_Request2_Response('HTTP/1.1 200 OK');
+        $response->appendBody('true');
+        $adapter->addResponse($response);
+
+        // set up HTTP response for not-spam
+        $response = new HTTP_Request2_Response('HTTP/1.1 200 OK');
+        $response->appendBody('false');
+        $adapter->addResponse($response);
+
+        // set up HTTP request object
+        $request = new HTTP_Request2();
+        $request->setAdapter($adapter);
+
+        // get akismet object to test
+        $akismet = $this->getAkismet($request);
+
+        $spamComment = new Services_Akismet2_Comment(array(
+            'author'      => 'viagra-test-123',
+            'authorEmail' => 'test@example.com',
+            'authorUri'   => 'http://example.com/',
+            'content'     => 'Spam, I am.',
+            'userIp'      => '127.0.0.1',
+            'userAgent'   => 'Services_Akismet2 unit tests',
+            'referrer'    => 'http://example.com/'
+        ));
+
+        $isSpam = $akismet->isSpam($spamComment);
         $this->assertTrue($isSpam);
 
-        $comment = new Services_Akismet2_Comment();
-        $comment->setAuthor('Services_Akismet2 unit tests');
-        $comment->setAuthorEmail('test@example.com');
-        $comment->setAuthorUri('http://example.com/');
-        $comment->setContent('Hello, World!');
-        $comment->setUserIp('127.0.0.1');
-        $comment->setUserAgent('Services_Akismet2 unit tests');
-        $comment->setHttpReferer('http://example.com/');
+        $comment = new Services_Akismet2_Comment(array(
+            'author'      => 'Services_Akismet2 unit tests',
+            'authorEmail' => 'test@example.com',
+            'authorUri'   => 'http://example.com/',
+            'content'     => 'Hello, World!',
+            'userIp'      => '127.0.0.1',
+            'userAgent'   => 'Services_Akismet2 unit tests',
+            'referrer'    => 'http://example.com/'
+        ));
 
-        $isSpam = $this->akismet->isSpam($comment);
+        $isSpam = $akismet->isSpam($comment);
         $this->assertFalse($isSpam);
     }
 
@@ -164,16 +170,39 @@ class Services_Akismet2_TestCase extends PHPUnit_Framework_TestCase
 
     public function testSubmitSpam()
     {
-        $spamComment = new Services_Akismet2_Comment();
-        $spamComment->setAuthor('viagra-test-123');
-        $spamComment->setAuthorEmail('test@example.com');
-        $spamComment->setAuthorUri('http://example.com/');
-        $spamComment->setContent('Spam, I am.');
-        $spamComment->setUserIp('127.0.0.1');
-        $spamComment->setUserAgent('Services_Akismet2 unit tests');
-        $spamComment->setHttpReferer('http://example.com/');
+        $adapter = new HTTP_Request2_Adapter_Mock();
 
-        $this->akismet->submitSpam($spamComment);
+        // set up HTTP response for API key verification
+        $response = new HTTP_Request2_Response('HTTP/1.1 200 OK');
+        $response->appendBody('valid');
+        $adapter->addResponse($response);
+
+        // set up HTTP response
+        $response = new HTTP_Request2_Response('HTTP/1.1 200 OK');
+        $response->appendBody('Thanks for making the web a better place.');
+        $adapter->addResponse($response);
+
+        // set up HTTP request object
+        $request = new HTTP_Request2();
+        $request->setAdapter($adapter);
+
+        // get akismet object to test
+        $akismet = $this->getAkismet($request);
+
+        $spamComment = new Services_Akismet2_Comment(array(
+            'author'      => 'viagra-test-123',
+            'authorEmail' => 'test@example.com',
+            'authorUri'   => 'http://example.com/',
+            'content'     => 'Spam, I am.',
+            'userIp'      => '127.0.0.1',
+            'userAgent'   => 'Services_Akismet2 unit tests',
+            'referrer'    => 'http://example.com/'
+        ));
+
+        $newAkismet = $akismet->submitSpam($spamComment);
+
+        // test fluent interface
+        $this->assertSame($akismet, $newAkismet);
     }
 
     // }}}
@@ -181,16 +210,39 @@ class Services_Akismet2_TestCase extends PHPUnit_Framework_TestCase
 
     public function testSubmitFalsePositive()
     {
-        $comment = new Services_Akismet2_Comment();
-        $comment->setAuthor('Services_Akismet2 unit tests');
-        $comment->setAuthorEmail('test@example.com');
-        $comment->setAuthorUri('http://example.com/');
-        $comment->setContent('Hello, World!');
-        $comment->setUserIp('127.0.0.1');
-        $comment->setUserAgent('Services_Akismet2 unit tests');
-        $comment->setHttpReferer('http://example.com/');
+        $adapter = new HTTP_Request2_Adapter_Mock();
 
-        $this->akismet->submitFalsePositive($comment);
+        // set up HTTP response for API key verification
+        $response = new HTTP_Request2_Response('HTTP/1.1 200 OK');
+        $response->appendBody('valid');
+        $adapter->addResponse($response);
+
+        // set up HTTP response
+        $response = new HTTP_Request2_Response('HTTP/1.1 200 OK');
+        $response->appendBody('Thanks for making the web a better place.');
+        $adapter->addResponse($response);
+
+        // set up HTTP request object
+        $request = new HTTP_Request2();
+        $request->setAdapter($adapter);
+
+        // get akismet object to test
+        $akismet = $this->getAkismet($request);
+
+        $comment = new Services_Akismet2_Comment(array(
+            'author'      => 'Services_Akismet2 unit tests',
+            'authorEmail' => 'test@example.com',
+            'authorUri'   => 'http://example.com/',
+            'content'     => 'Hello, World!',
+            'userIp'      => '127.0.0.1',
+            'userAgent'   => 'Services_Akismet2 unit tests',
+            'referrer'    => 'http://example.com/'
+        ));
+
+        $newAkismet = $akismet->submitFalsePositive($comment);
+
+        // test fluent interface
+        $this->assertSame($akismet, $newAkismet);
     }
 
     // }}}
@@ -201,10 +253,19 @@ class Services_Akismet2_TestCase extends PHPUnit_Framework_TestCase
      */
     public function testInvalidApiKeyException()
     {
-        $badApiKey = 'asdf';
-        $akismet = new Services_Akismet2(
-            $GLOBALS['Services_Akismet2_Unittest_Config']['blogUri'],
-            $badApiKey);
+        $adapter = new HTTP_Request2_Adapter_Mock();
+
+        // set up HTTP response for API key verification
+        $response = new HTTP_Request2_Response('HTTP/1.1 200 OK');
+        $response->appendBody('invalid');
+        $adapter->addResponse($response);
+
+        // set up HTTP request object
+        $request = new HTTP_Request2();
+        $request->setAdapter($adapter);
+
+        // get akismet object to test (tests the API key)
+        $akismet = $this->getAkismet($request);
     }
 
     // }}}
