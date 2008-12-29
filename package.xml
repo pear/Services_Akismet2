@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package packagerversion="1.7.2" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0
+    http://pear.php.net/dtd/tasks-1.0.xsd
+    http://pear.php.net/dtd/package-2.0
+    http://pear.php.net/dtd/package-2.0.xsd">
+ <name>Services_Akismet2</name>
+ <channel>pear.php.net</channel>
+ <extends>Services_Akismet</extends>
+ <summary>PHP client for the Akismet REST API</summary>
+ <description>This package provides an object-oriented interface to the Akismet REST API. The Akismet API is used to detect and to filter spam comments posted on weblogs.
+
+There are several anti-spam service providers that use the Akismet API. To use the API, you will need an API key from such a provider. Example providers include Wordpress (http://wordpress.com) and TypePad (http://antispam.typepad.com).
+
+Most services are free for personal or low-volume use, and offer licensing for commercial or high-volume applications.
+
+This package is derived from the miPHP Akismet class written by Bret Kuhns for use in PHP 4. This package requires PHP 5.2.1.</description>
+ <lead>
+  <name>Mike Gauthier</name>
+  <user>gauthierm</user>
+  <email>mike@silverorange.com</email>
+  <active>yes</active>
+ </lead>
+ <date>2008-12-29</date>
+ <time>00:37:49</time>
+ <version>
+  <release>0.1.0</release>
+  <api>0.1.0</api>
+ </version>
+ <stability>
+  <release>alpha</release>
+  <api>alpha</api>
+ </stability>
+ <license uri="http://www.opensource.org/licenses/mit-license.html">MIT</license>
+ <notes>Redeveloped version of Services_Akismet. Changes include:
+ * BC break to use HTTP_Request2 (Bug #15069).
+ * Added shortcut constructor for comment class.
+ * Added ability to set API endpoint (Bug #15387).
+ * Fluent interface for base class and comment.
+ * Enhanced exceptions.
+ </notes>
+ <contents>
+  <dir baseinstalldir="/" name="/">
+   <dir name="Services">
+    <dir name="Akismet2">
+     <file name="Comment.php" role="php" />
+     <file name="HttpException.php" role="php" />
+     <file name="InvalidApiKeyException.php" role="php" />
+     <file name="InvalidCommentException.php" role="php" />
+    </dir> <!-- /Services/Akismet2 -->
+    <file name="Akismet2.php" role="php" />
+   </dir> <!-- /Services -->
+   <dir name="tests">
+    <file name="AllTests.php" role="test" />
+    <file name="config.php.dist" role="test" />
+    <file name="TestCase.php" role="test" />
+   </dir> <!-- /tests -->
+  </dir> <!-- / -->
+ </contents>
+ <dependencies>
+  <required>
+   <php>
+    <min>5.2.1</min>
+   </php>
+   <pearinstaller>
+    <min>1.4.0</min>
+   </pearinstaller>
+   <package>
+    <name>HTTP_Request2</name>
+    <channel>pear.php.net</channel>
+    <min>0.1.0</min>
+   </package>
+  </required>
+ </dependencies>
+ <phprelease />
+ <changelog>
+  <release>
+   <version>
+    <release>0.1.0</release>
+    <api>0.1.0</api>
+   </version>
+   <stability>
+    <release>alpha</release>
+    <api>alpha</api>
+   </stability>
+   <date>2008-12-29</date>
+   <license uri="http://www.opensource.org/licenses/mit-license.html">MIT</license>
+   <notes>Redeveloped version of Services_Akismet. Changes include:
+ * BC break to use HTTP_Request2 (Bug #15069).
+ * Added shortcut constructor for comment class.
+ * Added ability to set API endpoint (Bug #15387).
+ * Fluent interface for base class and comment.
+ * Enhanced exceptions.
+   </notes>
+  </release>
+ </changelog>
+</package>
