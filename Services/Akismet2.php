@@ -401,15 +401,24 @@ class Services_Akismet2
             $methodName);
 
         try {
-            $this->request->setUrl($url);
-            $this->request->setHeader('User-Agent', $this->getUserAgent());
-            $this->request->setMethod(HTTP_Request2::METHOD_POST);
-            $this->request->addPostParameter($params);
+            /*
+             * Note: The request object is only used as a template to create
+             * other request objects. This prevents one API call from affecting
+             * the state of the HTTP request object for subsequent API calls.
+             */
+            $request = clone $this->request;
+            $request->setUrl($url);
+            $request->setHeader('User-Agent', $this->getUserAgent());
+            $request->setMethod(HTTP_Request2::METHOD_POST);
+            $request->addPostParameter($params);
 
-            $response = $this->request->send();
+            $response = $request->send();
         } catch (HTTP_Request2_Exception $e) {
-            $message = 'Error in request to Akismet: ' . $e->getMessage();
-            throw new Services_Akismet2_HttpException($message, $e->getCode());
+            $message = 'Error in request to Akismet API server "' .
+                $this->apiServer . '": ' . $e->getMessage();
+
+            throw new Services_Akismet2_HttpException($message, $e->getCode(),
+                $request);
         }
 
         return $response->getBody();
