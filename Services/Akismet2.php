@@ -238,6 +238,15 @@ class Services_Akismet2
      */
     protected $request = null;
 
+    /**
+     * Whether or not the API key is valid
+     *
+     * @var boolean
+     *
+     * @see Services_Akismet2::isApiKeyValid()
+     */
+    protected $apiKeyIsValid = null;
+
     // }}}
     // {{{ __construct()
 
@@ -260,16 +269,6 @@ class Services_Akismet2
      *                               If not specified, a HTTP request object is
      *                               created automatically.
      *
-     * @throws Services_Akismet2_InvalidApiKeyException if the provided
-     *         API key is not valid.
-     *
-     * @throws Services_Akismet2_HttpException if there is an error
-     *         communicating with the Akismet API server.
-     *
-     * @throws PEAR_Exception if the specified HTTP client implementation may
-     *         not be used with this PHP installation or if the specified HTTP
-     *         client implementation does not exist.
-     *
      * @see Services_Akismet2::setConfig()
      */
     public function __construct($blogUri, $apiKey, array $config = array(),
@@ -288,12 +287,6 @@ class Services_Akismet2
         // set options
         $this->setConfig($config);
 
-        // make sure the API key is valid
-        if (!$this->isApiKeyValid($this->apiKey)) {
-            throw new Services_Akismet2_InvalidApiKeyException('The specified ' .
-                'API key is not valid. Key used was: "' .
-                $this->apiKey . '".', 0, $this->apiKey);
-        }
     }
 
     // }}}
@@ -369,9 +362,14 @@ class Services_Akismet2
      *
      * @throws Services_Akismet2_InvalidCommentException if the specified
      *         comment is missing required fields.
+     *
+     * @throws Services_Akismet2_InvalidApiKeyException if the provided
+     *         API key is not valid.
      */
     public function isSpam(Services_Akismet2_Comment $comment)
     {
+        $this->validateApiKey();
+
         $params         = $comment->getPostParameters();
         $params['blog'] = $this->blogUri;
 
@@ -398,9 +396,14 @@ class Services_Akismet2
      *
      * @throws Services_Akismet2_InvalidCommentException if the specified
      *         comment is missing required fields.
+     *
+     * @throws Services_Akismet2_InvalidApiKeyException if the provided
+     *         API key is not valid.
      */
     public function submitSpam(Services_Akismet2_Comment $comment)
     {
+        $this->validateApiKey();
+
         $params         = $comment->getPostParameters();
         $params['blog'] = $this->blogUri;
 
@@ -428,9 +431,14 @@ class Services_Akismet2
      *
      * @throws Services_Akismet2_InvalidCommentException if the specified
      *         comment is missing required fields.
+     *
+     * @throws Services_Akismet2_InvalidApiKeyException if the provided
+     *         API key is not valid.
      */
     public function submitFalsePositive(Services_Akismet2_Comment $comment)
     {
+        $this->validateApiKey();
+
         $params         = $comment->getPostParameters();
         $params['blog'] = $this->blogUri;
 
@@ -507,6 +515,30 @@ class Services_Akismet2
         }
 
         return $response->getBody();
+    }
+
+    // }}}
+    // {{{ validateApiKey()
+
+    /**
+     * Validates the API key before performing a request
+     *
+     * @throws Services_Akismet2_InvalidApiKeyException if the provided
+     *         API key is not valid.
+     */
+    protected function validateApiKey()
+    {
+        // only check if the key is valid once
+        if ($this->apiKeyIsValid === null) {
+            $this->apiKeyIsValid = $this->isApiKeyValid($this->apiKey);
+        }
+
+        // make sure the API key is valid
+        if (!$this->apiKeyIsValid) {
+            throw new Services_Akismet2_InvalidApiKeyException('The specified ' .
+                'API key is not valid. Key used was: "' .
+                $this->apiKey . '".', 0, $this->apiKey);
+        }
     }
 
     // }}}
