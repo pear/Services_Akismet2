@@ -76,6 +76,16 @@ require_once 'HTTP/Request2/Adapter/Mock.php';
  */
 class Services_Akismet2_TestCase extends PHPUnit_Framework_TestCase
 {
+    // {{{ protected properties
+
+    /**
+     * @var HTTP_Request2_Adapter_Mock
+     *
+     * @see Services_Akismet2_TestCase::addHttpResponse()
+     */
+    protected $mock = null;
+
+    // }}}
     // {{{ private properties
 
     /**
@@ -89,6 +99,13 @@ class Services_Akismet2_TestCase extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->_oldErrorLevel = error_reporting(E_ALL | E_STRICT);
+
+        $this->mock = new HTTP_Request2_Adapter_Mock();
+
+        $request = new HTTP_Request2();
+        $request->setAdapter($this->mock);
+
+        $this->akismet = new Services_Akismet2('', '', array(), $request);
     }
 
     // }}}
@@ -96,15 +113,19 @@ class Services_Akismet2_TestCase extends PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
+        unset($this->akismet);
+        unset($this->mock);
         error_reporting($this->_oldErrorLevel);
     }
 
     // }}}
-    // {{{ getAkismet()
+    // {{{ addHttpResponse()
 
-    protected function getAkismet(HTTP_Request2 $request = null)
+    protected function addHttpResponse($body, $status = 'HTTP/1.1 200 OK')
     {
-        return new Services_Akismet2('foo', 'bar', array(), $request);
+        $response = new HTTP_Request2_Response($status);
+        $response->appendBody($body);
+        $this->mock->addResponse($response);
     }
 
     // }}}
@@ -114,29 +135,9 @@ class Services_Akismet2_TestCase extends PHPUnit_Framework_TestCase
 
     public function testIsSpam()
     {
-        $adapter = new HTTP_Request2_Adapter_Mock();
-
-        // set up HTTP response for API key verification
-        $response = new HTTP_Request2_Response('HTTP/1.1 200 OK');
-        $response->appendBody('valid');
-        $adapter->addResponse($response);
-
-        // set up HTTP response for spam
-        $response = new HTTP_Request2_Response('HTTP/1.1 200 OK');
-        $response->appendBody('true');
-        $adapter->addResponse($response);
-
-        // set up HTTP response for not-spam
-        $response = new HTTP_Request2_Response('HTTP/1.1 200 OK');
-        $response->appendBody('false');
-        $adapter->addResponse($response);
-
-        // set up HTTP request object
-        $request = new HTTP_Request2();
-        $request->setAdapter($adapter);
-
-        // get akismet object to test
-        $akismet = $this->getAkismet($request);
+        $this->addHttpResponse('valid');
+        $this->addHttpResponse('true');
+        $this->addHttpResponse('false');
 
         $spamComment = new Services_Akismet2_Comment(array(
             'author'      => 'viagra-test-123',
@@ -148,7 +149,7 @@ class Services_Akismet2_TestCase extends PHPUnit_Framework_TestCase
             'referrer'    => 'http://example.com/'
         ));
 
-        $isSpam = $akismet->isSpam($spamComment);
+        $isSpam = $this->akismet->isSpam($spamComment);
         $this->assertTrue($isSpam);
 
         $comment = new Services_Akismet2_Comment(array(
@@ -161,7 +162,7 @@ class Services_Akismet2_TestCase extends PHPUnit_Framework_TestCase
             'referrer'    => 'http://example.com/'
         ));
 
-        $isSpam = $akismet->isSpam($comment);
+        $isSpam = $this->akismet->isSpam($comment);
         $this->assertFalse($isSpam);
     }
 
@@ -170,24 +171,8 @@ class Services_Akismet2_TestCase extends PHPUnit_Framework_TestCase
 
     public function testSubmitSpam()
     {
-        $adapter = new HTTP_Request2_Adapter_Mock();
-
-        // set up HTTP response for API key verification
-        $response = new HTTP_Request2_Response('HTTP/1.1 200 OK');
-        $response->appendBody('valid');
-        $adapter->addResponse($response);
-
-        // set up HTTP response
-        $response = new HTTP_Request2_Response('HTTP/1.1 200 OK');
-        $response->appendBody('Thanks for making the web a better place.');
-        $adapter->addResponse($response);
-
-        // set up HTTP request object
-        $request = new HTTP_Request2();
-        $request->setAdapter($adapter);
-
-        // get akismet object to test
-        $akismet = $this->getAkismet($request);
+        $this->addHttpResponse('valid');
+        $this->addHttpResponse('Thanks for making the web a better place.');
 
         $spamComment = new Services_Akismet2_Comment(array(
             'author'      => 'viagra-test-123',
@@ -199,10 +184,10 @@ class Services_Akismet2_TestCase extends PHPUnit_Framework_TestCase
             'referrer'    => 'http://example.com/'
         ));
 
-        $newAkismet = $akismet->submitSpam($spamComment);
+        $newAkismet = $this->akismet->submitSpam($spamComment);
 
         // test fluent interface
-        $this->assertSame($akismet, $newAkismet);
+        $this->assertSame($this->akismet, $newAkismet);
     }
 
     // }}}
@@ -210,24 +195,8 @@ class Services_Akismet2_TestCase extends PHPUnit_Framework_TestCase
 
     public function testSubmitFalsePositive()
     {
-        $adapter = new HTTP_Request2_Adapter_Mock();
-
-        // set up HTTP response for API key verification
-        $response = new HTTP_Request2_Response('HTTP/1.1 200 OK');
-        $response->appendBody('valid');
-        $adapter->addResponse($response);
-
-        // set up HTTP response
-        $response = new HTTP_Request2_Response('HTTP/1.1 200 OK');
-        $response->appendBody('Thanks for making the web a better place.');
-        $adapter->addResponse($response);
-
-        // set up HTTP request object
-        $request = new HTTP_Request2();
-        $request->setAdapter($adapter);
-
-        // get akismet object to test
-        $akismet = $this->getAkismet($request);
+        $this->addHttpResponse('valid');
+        $this->addHttpResponse('Thanks for making the web a better place.');
 
         $comment = new Services_Akismet2_Comment(array(
             'author'      => 'Services_Akismet2 unit tests',
@@ -239,10 +208,10 @@ class Services_Akismet2_TestCase extends PHPUnit_Framework_TestCase
             'referrer'    => 'http://example.com/'
         ));
 
-        $newAkismet = $akismet->submitFalsePositive($comment);
+        $newAkismet = $this->akismet->submitFalsePositive($comment);
 
         // test fluent interface
-        $this->assertSame($akismet, $newAkismet);
+        $this->assertSame($this->akismet, $newAkismet);
     }
 
     // }}}
@@ -253,19 +222,20 @@ class Services_Akismet2_TestCase extends PHPUnit_Framework_TestCase
      */
     public function testInvalidApiKeyException()
     {
-        $adapter = new HTTP_Request2_Adapter_Mock();
+        $this->addHttpResponse('invalid');
 
-        // set up HTTP response for API key verification
-        $response = new HTTP_Request2_Response('HTTP/1.1 200 OK');
-        $response->appendBody('invalid');
-        $adapter->addResponse($response);
+        $spamComment = new Services_Akismet2_Comment(array(
+            'author'      => 'viagra-test-123',
+            'authorEmail' => 'test@example.com',
+            'authorUri'   => 'http://example.com/',
+            'content'     => 'Spam, I am.',
+            'userIp'      => '127.0.0.1',
+            'userAgent'   => 'Services_Akismet2 unit tests',
+            'referrer'    => 'http://example.com/'
+        ));
 
-        // set up HTTP request object
-        $request = new HTTP_Request2();
-        $request->setAdapter($adapter);
-
-        // get akismet object to test (tests the API key)
-        $akismet = $this->getAkismet($request);
+        // try to make a request
+        $this->akismet->submitSpam($spamComment);
     }
 
     // }}}
