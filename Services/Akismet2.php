@@ -175,7 +175,7 @@ require_once 'HTTP/Request2.php';
  */
 class Services_Akismet2
 {
-    // {{{ private properties
+    // {{{ protected properties
 
     /**
      * The port to use to connect to the Akismet API server
@@ -184,7 +184,7 @@ class Services_Akismet2
      *
      * @var integer
      */
-    private $_apiPort    = 80;
+    protected $apiPort = 80;
 
     /**
      * The Akismet API server name
@@ -193,7 +193,7 @@ class Services_Akismet2
      *
      * @var string
      */
-    private $_apiServer  = 'rest.akismet.com';
+    protected $apiServer = 'rest.akismet.com';
 
     /**
      * The Akismet API version to use
@@ -202,7 +202,7 @@ class Services_Akismet2
      *
      * @var string
      */
-    private $_apiVersion = '1.1';
+    protected $apiVersion = '1.1';
 
     /**
      * The URI of the webblog for which Akismet services will be used
@@ -211,7 +211,7 @@ class Services_Akismet2
      *
      * @see Services_Akismet2::__construct()
      */
-    private $_blogUri = '';
+    protected $blogUri = '';
 
     /**
      * The API key to use to access Akismet services
@@ -220,12 +220,16 @@ class Services_Akismet2
      *
      * @see Services_Akismet2::__construct()
      */
-    private $_apiKey  = '';
+    protected $apiKey = '';
+
+    /**
+     * @var HTTP_Request2
+     *
+     * @see Services_Akismet2::setRequest()
+     */
+    protected $request = null;
 
     // }}}
-
-    protected $request;
-
     // {{{ __construct()
 
     /**
@@ -250,8 +254,8 @@ class Services_Akismet2
     public function __construct($blogUri, $apiKey,
         HTTP_Request2 $request = null)
     {
-        $this->_blogUri = $blogUri;
-        $this->_apiKey  = $apiKey;
+        $this->blogUri = $blogUri;
+        $this->apiKey  = $apiKey;
 
         // set http request object
         if ($request === null) {
@@ -261,10 +265,10 @@ class Services_Akismet2
         $this->setRequest($request);
 
         // make sure the API key is valid
-        if (!$this->isApiKeyValid($this->_apiKey)) {
+        if (!$this->isApiKeyValid($this->apiKey)) {
             throw new Services_Akismet2_InvalidApiKeyException('The specified ' .
                 'API key is not valid. Key used was: "' .
-                $this->_apiKey . '".', 0, $this->_apiKey);
+                $this->apiKey . '".', 0, $this->apiKey);
         }
     }
 
@@ -287,7 +291,7 @@ class Services_Akismet2
     public function isSpam(Services_Akismet2_Comment $comment)
     {
         $params         = $comment->getPostParameters();
-        $params['blog'] = $this->_blogUri;
+        $params['blog'] = $this->blogUri;
 
         $response = $this->sendRequest('comment-check', $params);
 
@@ -316,7 +320,7 @@ class Services_Akismet2
     public function submitSpam(Services_Akismet2_Comment $comment)
     {
         $params         = $comment->getPostParameters();
-        $params['blog'] = $this->_blogUri;
+        $params['blog'] = $this->blogUri;
 
         $this->sendRequest('submit-spam', $params);
     }
@@ -344,7 +348,7 @@ class Services_Akismet2
     public function submitFalsePositive(Services_Akismet2_Comment $comment)
     {
         $params         = $comment->getPostParameters();
-        $params['blog'] = $this->_blogUri;
+        $params['blog'] = $this->blogUri;
 
         $this->sendRequest('submit-ham', $params);
     }
@@ -381,16 +385,16 @@ class Services_Akismet2
      */
     protected function sendRequest($methodName, array $params = array())
     {
-        if (strlen($this->_apiKey) > 0) {
-            $host = $this->_apiKey . '.' . $this->_apiServer;
+        if (strlen($this->apiKey) > 0) {
+            $host = $this->apiKey . '.' . $this->apiServer;
         } else {
-            $host = $this->_apiServer;
+            $host = $this->apiServer;
         }
 
         $url = sprintf('http://%s:%s/%s/%s',
             $host,
-            $this->_apiPort,
-            $this->_apiVersion,
+            $this->apiPort,
+            $this->apiVersion,
             $methodName);
 
         try {
@@ -426,7 +430,7 @@ class Services_Akismet2
     {
         $params = array(
             'key'  => $key,
-            'blog' => $this->_blogUri
+            'blog' => $this->blogUri
         );
 
         $response = $this->sendRequest('verify-key', $params);
@@ -444,7 +448,7 @@ class Services_Akismet2
     private function _getUserAgent()
     {
         return sprintf('@name@/@api-version@ | Akismet/%s',
-            $this->_apiVersion);
+            $this->apiVersion);
     }
 
     // }}}
