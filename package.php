@@ -55,12 +55,14 @@ $release_notes   =
 
 $description =
     "This package provides an object-oriented interface to the Akismet REST " .
-    "API. Akismet is used to detect and to filter spam comments posted on " .
-    "weblogs. Though the use of Akismet is not specific to Wordpress, you " .
-    "will need a Wordpress API key from http://wordpress.com/api-keys/ to " .
-    "use this package.\n\n" .
-    "Akismet is free for personal use and a license may be purchased for " .
-    "commercial or high-volume applications.\n\n" .
+    "API. The Akismet API is used to detect and to filter spam comments " .
+    "posted on weblogs.\n\n" .
+    "There are several anti-spam service providers that use the Akismet API. " .
+    "To use the API, you will need an API key from such a provider. Example " .
+    "providers include Wordpress (http://wordpress.com) and TypePad " .
+    "(http://antispam.typepad.com).\n\n" .
+    "Most services are free for personal or low-volume use, and offer " .
+    "licensing for commercial or high-volume applications.\n\n" .
     "This package is derived from the miPHP Akismet class written by Bret " .
     "Kuhns for use in PHP 4. This package requires PHP 5.2.1.";
 
