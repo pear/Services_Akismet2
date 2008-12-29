@@ -402,7 +402,7 @@ class Services_Akismet2
 
         try {
             $this->request->setUrl($url);
-            $this->request->setHeader('User-Agent', $this->_getUserAgent());
+            $this->request->setHeader('User-Agent', $this->getUserAgent());
             $this->request->setMethod(HTTP_Request2::METHOD_POST);
             $this->request->addPostParameter($params);
 
@@ -441,14 +441,14 @@ class Services_Akismet2
     }
 
     // }}}
-    // {{{ _getUserAgent()
+    // {{{ getUserAgent()
 
     /**
      * Gets the HTTP user-agent used to make Akismet requests
      *
      * @return string the HTTP user-agent used to make Akismet request.
      */
-    private function _getUserAgent()
+    protected function getUserAgent()
     {
         return sprintf('@name@/@api-version@ | Akismet/%s',
             $this->apiVersion);
