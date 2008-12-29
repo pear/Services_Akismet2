@@ -278,7 +278,7 @@ class Services_Akismet2_Comment
         foreach (self::$_requiredFields as $field) {
             if (!array_key_exists($field, $this->_fields)) {
                 throw new Services_Akismet2_InvalidCommentException('Comment ' .
-                    'is missing required field: "' . $field . '".');
+                    'is missing required field: "' . $field . '".', 0, $this);
             }
         }
 
@@ -306,7 +306,7 @@ class Services_Akismet2_Comment
      *
      * @param string $type the type of this comment.
      *
-     * @return void
+     * @return Services_Akismet2_Comment the comment object.
      */
     public function setType($type)
     {
@@ -315,6 +315,8 @@ class Services_Akismet2_Comment
         } else {
             $this->_fields['comment_type'] = strval($type);
         }
+
+        return $this;
     }
 
     // }}}
@@ -325,7 +327,7 @@ class Services_Akismet2_Comment
      *
      * @param string $author the author of this comment.
      *
-     * @return void
+     * @return Services_Akismet2_Comment the comment object.
      */
     public function setAuthor($author)
     {
@@ -334,6 +336,8 @@ class Services_Akismet2_Comment
         } else {
             $this->_fields['comment_author'] = strval($author);
         }
+
+        return $this;
     }
 
     // }}}
@@ -344,7 +348,7 @@ class Services_Akismet2_Comment
      *
      * @param string $email the email address of the author of this comment.
      *
-     * @return void
+     * @return Services_Akismet2_Comment the comment object.
      */
     public function setAuthorEmail($email)
     {
@@ -353,6 +357,8 @@ class Services_Akismet2_Comment
         } else {
             $this->_fields['comment_author_email'] = strval($email);
         }
+
+        return $this;
     }
 
     // }}}
@@ -363,7 +369,7 @@ class Services_Akismet2_Comment
      *
      * @param string $uri the URI of the author of this comment.
      *
-     * @return void
+     * @return Services_Akismet2_Comment the comment object.
      */
     public function setAuthorUri($uri)
     {
@@ -372,6 +378,8 @@ class Services_Akismet2_Comment
         } else {
             $this->_fields['comment_author_url'] = strval($uri);
         }
+
+        return $this;
     }
 
     // }}}
@@ -382,7 +390,7 @@ class Services_Akismet2_Comment
      *
      * @param string $content the content of this comment.
      *
-     * @return void
+     * @return Services_Akismet2_Comment the comment object.
      */
     public function setContent($content)
     {
@@ -391,6 +399,8 @@ class Services_Akismet2_Comment
         } else {
             $this->_fields['comment_content'] = strval($content);
         }
+
+        return $this;
     }
 
     // }}}
@@ -407,7 +417,7 @@ class Services_Akismet2_Comment
      * @param string $uri the permalink of the post to which this comment is
      *                    being added.
      *
-     * @return void
+     * @return Services_Akismet2_Comment the comment object.
      */
     public function setPostPermalink($uri)
     {
@@ -416,6 +426,8 @@ class Services_Akismet2_Comment
         } else {
             $this->_fields['permalink'] = strval($uri);
         }
+
+        return $this;
     }
 
     // }}}
@@ -432,7 +444,7 @@ class Services_Akismet2_Comment
      * @param string $ipAddress the IP address of the user posting this
      *                          comment.
      *
-     * @return void
+     * @return Services_Akismet2_Comment the comment object.
      */
     public function setUserIp($ipAddress)
     {
@@ -441,6 +453,8 @@ class Services_Akismet2_Comment
         } else {
             $this->_fields['user_ip'] = strval($ipAddress);
         }
+
+        return $this;
     }
 
     // }}}
@@ -457,7 +471,7 @@ class Services_Akismet2_Comment
      * @param string $userAgent the user agent of the user posting this
      *                          comment.
      *
-     * @return void
+     * @return Services_Akismet2_Comment the comment object.
      */
     public function setUserAgent($userAgent)
     {
@@ -466,6 +480,8 @@ class Services_Akismet2_Comment
         } else {
             $this->_fields['user_agent'] = strval($userAgent);
         }
+
+        return $this;
     }
 
     // }}}
@@ -482,7 +498,7 @@ class Services_Akismet2_Comment
      * @param string $httpReferer the HTTP referer of the user posting this
      *                            comment.
      *
-     * @return void
+     * @return Services_Akismet2_Comment the comment object.
      */
     public function setHttpReferer($httpReferer)
     {
@@ -491,6 +507,8 @@ class Services_Akismet2_Comment
         } else {
             $this->_fields['referrer'] = strval($httpReferer);
         }
+
+        return $this;
     }
 
     // }}}
