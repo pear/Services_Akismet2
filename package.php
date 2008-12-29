@@ -40,10 +40,10 @@
 require_once 'PEAR/PackageFileManager2.php';
 PEAR::setErrorHandling(PEAR_ERROR_DIE);
 
-$api_version     = '2.0.0';
+$api_version     = '0.1.0';
 $api_state       = 'alpha';
 
-$release_version = '2.0.0alpha1';
+$release_version = '0.1.0';
 $release_state   = 'alpha';
 $release_notes   =
     " * BC break to use HTTP_Request2.\n" .
