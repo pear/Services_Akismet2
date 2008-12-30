@@ -256,8 +256,8 @@ class Services_Akismet2
      * @param string        $blogUri the URI of the webblog homepage.
      * @param string        $apiKey  the API key to use for Akismet services.
      * @param array         $config  optional. An associative array of
-     *                               configuration options.
-     *                               {@see Services_Akismet2::setConfig()}.
+     *                               configuration options. See
+     *                               {@link Services_Akismet2::setConfig()}.
      * @param HTTP_Request2 $request optional. The HTTP request object to use.
      *                               If not specified, a HTTP request object is
      *                               created automatically.
