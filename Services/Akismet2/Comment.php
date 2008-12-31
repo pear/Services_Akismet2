@@ -153,7 +153,7 @@ class Services_Akismet2_Comment
      * names are:
      *
      * - <kbd>string author</kbd>      - the name of the author.
-     * - <kbd>string authorEmail</kbd> - the email addedd of the author.
+     * - <kbd>string authorEmail</kbd> - the email address of the author.
      * - <kbd>string authorUri</kbd>   - a link provided by the comment
      *                                   author.
      * - <kbd>string content</kbd>     - the content of the comment.
