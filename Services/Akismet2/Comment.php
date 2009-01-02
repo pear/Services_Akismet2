@@ -172,6 +172,11 @@ class Services_Akismet2_Comment
      * - <kbd>string comment_author_url</kbd>   - a link provided by the
      *                                            comment author.
      * - <kbd>string comment_content</kbd>      - the content of the comment.
+     * - <kbd>string comment_type</kbd>         - the comment type. Either
+     *                                            <kbd>comment</kbd>,
+     *                                            <kbd>trackback</kbd>,
+     *                                            <kbd>pingback</kbd>, or a
+     *                                            a made-up value.
      * - <kbd>string permalink</kbd>            - permalink of the article to
      *                                            which the comment is being
      *                                            added.
@@ -179,11 +184,6 @@ class Services_Akismet2_Comment
      *                                            specified, the HTTP referrer
      *                                            of the current request is
      *                                            used.
-     * - <kbd>string type</kbd>                 - the comment type. Either
-     *                                            <kbd>comment</kbd>,
-     *                                            <kbd>trackback</kbd>,
-     *                                            <kbd>pingback</kbd>, or a
-     *                                            a made-up value.
      * - <kbd>string user_ip</kbd>              - IP address from which the
      *                                            comment was submitted. If not
      *                                            specified the remote IP
