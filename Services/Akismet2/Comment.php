@@ -55,7 +55,7 @@ require_once 'Services/Akismet2/InvalidCommentException.php';
  * $comment = new Services_Akismet2_Comment(array(
  *     'comment_author'       => 'Test Author',
  *     'comment_author_email' => 'test@example.com',
- *     'comment_author_uri'   => 'http://example.com/',
+ *     'comment_author_url'   => 'http://example.com/',
  *     'comment_content'      => 'Hello, World!'
  * ));
  *
