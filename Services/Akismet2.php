@@ -346,7 +346,7 @@ class Services_Akismet2
     /**
      * Checks whether or not a comment is spam
      *
-     * @param Services_Akismet2_Comment $comment the comment to check.
+     * @param Services_Akismet2_Comment|array $comment the comment to check.
      *
      * @return boolean true if the comment is spam and false if it is not.
      *
@@ -358,9 +358,21 @@ class Services_Akismet2
      *
      * @throws Services_Akismet2_InvalidApiKeyException if the provided
      *         API key is not valid.
+     *
+     * @throws InvalidArgumentException if the provided comment is neither an
+     *         array not an instanceof Services_Akismet2_Comment.
      */
-    public function isSpam(Services_Akismet2_Comment $comment)
+    public function isSpam($comment)
     {
+        if (is_array($comment)) {
+            $comment = new Services_Akismet2_Comment($comment);
+        }
+
+        if (!($comment instanceof Services_Aksimet2_Comment)) {
+            throw new InvalidArgumentException('Comment must be either an ' .
+                'array or an instance of Services_Akismet2_Comment.');
+        }
+
         $this->validateApiKey();
 
         $params         = $comment->getPostParameters();
@@ -380,7 +392,8 @@ class Services_Akismet2
      * Use this method to submit comments that are spam but are not detected
      * by Akismet.
      *
-     * @param Services_Akismet2_Comment $comment the comment to submit as spam.
+     * @param Services_Akismet2_Comment|array $comment the comment to submit
+     *                                                 as spam.
      *
      * @return Services_Akismet2 the Akismet API object.
      *
@@ -392,9 +405,21 @@ class Services_Akismet2
      *
      * @throws Services_Akismet2_InvalidApiKeyException if the provided
      *         API key is not valid.
+     *
+     * @throws InvalidArgumentException if the provided comment is neither an
+     *         array not an instanceof Services_Akismet2_Comment.
      */
-    public function submitSpam(Services_Akismet2_Comment $comment)
+    public function submitSpam($comment)
     {
+        if (is_array($comment)) {
+            $comment = new Services_Akismet2_Comment($comment);
+        }
+
+        if (!($comment instanceof Services_Aksimet2_Comment)) {
+            throw new InvalidArgumentException('Comment must be either an ' .
+                'array or an instance of Services_Akismet2_Comment.');
+        }
+
         $this->validateApiKey();
 
         $params         = $comment->getPostParameters();
@@ -414,8 +439,8 @@ class Services_Akismet2
      * Use this method to submit comments that are detected as spam but are not
      * actually spam.
      *
-     * @param Services_Akismet2_Comment $comment the comment that is
-     *                                          <em>not</em> spam.
+     * @param Services_Akismet2_Comment|array $comment the comment that is
+     *                                                 <em>not</em> spam.
      *
      * @return Services_Akismet2 the Akismet API object.
      *
@@ -427,9 +452,21 @@ class Services_Akismet2
      *
      * @throws Services_Akismet2_InvalidApiKeyException if the provided
      *         API key is not valid.
+     *
+     * @throws InvalidArgumentException if the provided comment is neither an
+     *         array not an instanceof Services_Akismet2_Comment.
      */
-    public function submitFalsePositive(Services_Akismet2_Comment $comment)
+    public function submitFalsePositive($comment)
     {
+        if (is_array($comment)) {
+            $comment = new Services_Akismet2_Comment($comment);
+        }
+
+        if (!($comment instanceof Services_Aksimet2_Comment)) {
+            throw new InvalidArgumentException('Comment must be either an ' .
+                'array or an instance of Services_Akismet2_Comment.');
+        }
+
         $this->validateApiKey();
 
         $params         = $comment->getPostParameters();
