@@ -368,7 +368,7 @@ class Services_Akismet2
             $comment = new Services_Akismet2_Comment($comment);
         }
 
-        if (!($comment instanceof Services_Aksimet2_Comment)) {
+        if (!($comment instanceof Services_Akismet2_Comment)) {
             throw new InvalidArgumentException('Comment must be either an ' .
                 'array or an instance of Services_Akismet2_Comment.');
         }
@@ -415,7 +415,7 @@ class Services_Akismet2
             $comment = new Services_Akismet2_Comment($comment);
         }
 
-        if (!($comment instanceof Services_Aksimet2_Comment)) {
+        if (!($comment instanceof Services_Akismet2_Comment)) {
             throw new InvalidArgumentException('Comment must be either an ' .
                 'array or an instance of Services_Akismet2_Comment.');
         }
@@ -462,7 +462,7 @@ class Services_Akismet2
             $comment = new Services_Akismet2_Comment($comment);
         }
 
-        if (!($comment instanceof Services_Aksimet2_Comment)) {
+        if (!($comment instanceof Services_Akismet2_Comment)) {
             throw new InvalidArgumentException('Comment must be either an ' .
                 'array or an instance of Services_Akismet2_Comment.');
         }
