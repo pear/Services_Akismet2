@@ -53,10 +53,23 @@ require_once 'Services/Akismet2/InvalidCommentException.php';
  *
  * <code>
  * $comment = new Services_Akismet2_Comment(array(
- *     'author'      => 'Test Author',
- *     'authorEmail' => 'test@example.com',
- *     'authorUri'   => 'http://example.com/',
- *     'content'     => 'Hello, World!'
+ *     'comment_author'       => 'Test Author',
+ *     'comment_author_email' => 'test@example.com',
+ *     'comment_author_uri'   => 'http://example.com/',
+ *     'comment_content'      => 'Hello, World!'
+ * ));
+ *
+ * echo $comment;
+ * </code>
+ *
+ * Example usage using fluent interface:
+ *
+ * <code>
+ * $comment = new Services_Akismet2_Comment();
+ * $comment->setAuthor('Test Author')
+ *         ->setAuthorEmail('test@example.com')
+ *         ->setAuthorUri('http://example.com/')
+ *         ->setContent('Hello, World!');
  * ));
  *
  * echo $comment;
@@ -152,30 +165,46 @@ class Services_Akismet2_Comment
      * Comments can be initialized from an array of named values. Available
      * names are:
      *
-     * - <kbd>string author</kbd>      - the name of the author.
-     * - <kbd>string authorEmail</kbd> - the email address of the author.
-     * - <kbd>string authorUri</kbd>   - a link provided by the comment
-     *                                   author.
-     * - <kbd>string content</kbd>     - the content of the comment.
-     * - <kbd>string permalink</kbd>   - permalink of the post to which the
-     *                                   comment is being added.
-     * - <kbd>string referrer</kbd>    - HTTP referrer. If not specified, the
-     *                                   HTTP referrer of the current request
-     *                                   is used.
-     * - <kbd>string type</kbd>        - the comment type.
-     * - <kbd>string userIp</kbd>      - IP address from which the comment was
-     *                                   submitted. If not specified the remote
-     *                                   IP address of the current request is
-     *                                   used.
-     * - <kbd>string userAgent</kbd>   - the HTTP user agent used to post the
-     *                                   comment. If not specified, the user
-     *                                   agent of the current request is used.
+     * - <kbd>string comment_author</kbd>       - the name of the comment
+     *                                            author.
+     * - <kbd>string comment_author_email</kbd> - the email address of the
+     *                                            comment author.
+     * - <kbd>string comment_author_url</kbd>   - a link provided by the
+     *                                            comment author.
+     * - <kbd>string comment_content</kbd>      - the content of the comment.
+     * - <kbd>string permalink</kbd>            - permalink of the article to
+     *                                            which the comment is being
+     *                                            added.
+     * - <kbd>string referrer</kbd>             - HTTP referrer. If not
+     *                                            specified, the HTTP referrer
+     *                                            of the current request is
+     *                                            used.
+     * - <kbd>string type</kbd>                 - the comment type. Either
+     *                                            <kbd>comment</kbd>,
+     *                                            <kbd>trackback</kbd>,
+     *                                            <kbd>pingback</kbd>, or a
+     *                                            a made-up value.
+     * - <kbd>string user_ip</kbd>              - IP address from which the
+     *                                            comment was submitted. If not
+     *                                            specified the remote IP
+     *                                            address of the current
+     *                                            request is used.
+     * - <kbd>string user_agent</kbd>           - the HTTP user agent used to
+     *                                            submit the comment. If not
+     *                                            specified, the user agent of
+     *                                            the current request is used.
      *
-     * If not specified, the 'userIp', 'userAgent' and 'referrer' fields are
-     * defaulted to the current request values if possible. They may be changed
-     * by calling the appropriate setter method.
+     * If not specified, the <kbd>user_ip</kbd>, <kbd>user_agent</kbd> and
+     * <kbd>referrer</kbd> fields are defaulted to the current request values
+     * if possible. They may be changed either by specifying them here or by
+     * using the appropriate setter method.
      *
-     * @param array $fields optional. An array of initial values.
+     * Field names not included in the above list are allowed. The Akismet API
+     * can make use of any extra identifying information provided.
+     *
+     * @param array $fields optional. An array of initial fields.
+     *
+     * @see http://akismet.com/development/api/#comment-check
      */
     public function __construct(array $fields = array())
     {
@@ -193,41 +222,7 @@ class Services_Akismet2_Comment
         }
 
         // set from fields
-        if (array_key_exists('author', $fields)) {
-            $this->setAuthor($fields['author']);
-        }
-
-        if (array_key_exists('authorEmail', $fields)) {
-            $this->setAuthorEmail($fields['authorEmail']);
-        }
-
-        if (array_key_exists('authorUri', $fields)) {
-            $this->setAuthorUri($fields['authorUri']);
-        }
-
-        if (array_key_exists('content', $fields)) {
-            $this->setContent($fields['content']);
-        }
-
-        if (array_key_exists('permalink', $fields)) {
-            $this->setPostPermalink($fields['permalink']);
-        }
-
-        if (array_key_exists('referrer', $fields)) {
-            $this->setHttpReferer($fields['referrer']);
-        }
-
-        if (array_key_exists('type', $fields)) {
-            $this->setType($fields['type']);
-        }
-
-        if (array_key_exists('userAgent', $fields)) {
-            $this->setUserAgent($fields['userAgent']);
-        }
-
-        if (array_key_exists('userIp', $fields)) {
-            $this->setUserIp($fields['userIp']);
-        }
+        $this->setFields($fields);
     }
 
     // }}}
@@ -251,7 +246,7 @@ class Services_Akismet2_Comment
         $string .= "\nPost Data:\n\n";
         try {
             $string .= "\t" . $this->getPostData() . "\n";
-        } catch (Exception $e) {
+        } catch (Services_Akismet2_InvalidCommentException $e) {
             $string .= "\tmissing required fields\n";
         }
 
@@ -299,6 +294,54 @@ class Services_Akismet2_Comment
     }
 
     // }}}
+    // {{{ setField()
+
+    /**
+     * Sets a field of this comment
+     *
+     * Common fields as described in the Akismet API have setter methods
+     * provided. This method may be used to set custom fields not covered by
+     * the common field setter methods.
+     *
+     * @param string $name  the name of the field.
+     * @param string $value the value of the field.
+     *
+     * @return Services_Akismet2_Comment the comment object.
+     */
+    public function setField($name, $value)
+    {
+        $this->_fields[strval($name)] = strval($value);
+
+        return $this;
+    }
+
+    // }}}
+    // {{{ setFields()
+
+    /**
+     * Sets multiple fields of this comment
+     *
+     * Note: Common fields as described in the Akismet API have setter methods
+     * provided. The setter methods may be optionally used instead.
+     *
+     * @param array $fields an associative array of name-value pairs. The
+     *                      field name is the array key and the field value is
+     *                      the array value. See
+     *                      {@link Services_Akismet2_Comment::__construct()}
+     *                      for a list of common field names.
+     *
+     * @return Services_Akismet2_Comment the comment object.
+     */
+    public function setFields(array $fields)
+    {
+        foreach ($fields as $name => $value) {
+            $this->setField($name, $value);
+        }
+
+        return $this;
+    }
+
+    // }}}
     // {{{ setType()
 
     /**
@@ -310,13 +353,7 @@ class Services_Akismet2_Comment
      */
     public function setType($type)
     {
-        if ($type === null) {
-            unset($this->_fields['comment_type']);
-        } else {
-            $this->_fields['comment_type'] = strval($type);
-        }
-
-        return $this;
+        return $this->setField('comment_type', $type);
     }
 
     // }}}
@@ -331,13 +368,7 @@ class Services_Akismet2_Comment
      */
     public function setAuthor($author)
     {
-        if ($author === null) {
-            unset($this->_fields['comment_author']);
-        } else {
-            $this->_fields['comment_author'] = strval($author);
-        }
-
-        return $this;
+        return $this->setField('comment_author', $author);
     }
 
     // }}}
@@ -352,34 +383,22 @@ class Services_Akismet2_Comment
      */
     public function setAuthorEmail($email)
     {
-        if ($email === null) {
-            unset($this->_fields['comment_author_email']);
-        } else {
-            $this->_fields['comment_author_email'] = strval($email);
-        }
-
-        return $this;
+        return $this->setField('comment_author_email', $email);
     }
 
     // }}}
-    // {{{ setAuthorUri()
+    // {{{ setAuthorUrl()
 
     /**
      * Sets the URI of the author of this comment
      *
-     * @param string $uri the URI of the author of this comment.
+     * @param string $url the URI of the author of this comment.
      *
      * @return Services_Akismet2_Comment the comment object.
      */
-    public function setAuthorUri($uri)
+    public function setAuthorUrl($url)
     {
-        if ($uri === null) {
-            unset($this->_fields['comment_author_url']);
-        } else {
-            $this->_fields['comment_author_url'] = strval($uri);
-        }
-
-        return $this;
+        return $this->setField('comment_author_url', $url);
     }
 
     // }}}
@@ -394,13 +413,7 @@ class Services_Akismet2_Comment
      */
     public function setContent($content)
     {
-        if ($content === null) {
-            unset($this->_fields['comment_content']);
-        } else {
-            $this->_fields['comment_content'] = strval($content);
-        }
-
-        return $this;
+        return $this->setField('comment_content', $content);
     }
 
     // }}}
@@ -414,20 +427,14 @@ class Services_Akismet2_Comment
      * Permalinks are intended to prevent link rot. Akismet does not require
      * the permalink field but can use it to improve spam detection accuracy.
      *
-     * @param string $uri the permalink of the post to which this comment is
+     * @param string $url the permalink of the post to which this comment is
      *                    being added.
      *
      * @return Services_Akismet2_Comment the comment object.
      */
-    public function setPostPermalink($uri)
+    public function setPostPermalink($url)
     {
-        if ($uri === null) {
-            unset($this->_fields['permalink']);
-        } else {
-            $this->_fields['permalink'] = strval($uri);
-        }
-
-        return $this;
+        return $this->setField('permalink', $url);
     }
 
     // }}}
@@ -448,13 +455,7 @@ class Services_Akismet2_Comment
      */
     public function setUserIp($ipAddress)
     {
-        if ($ipAddress === null) {
-            unset($this->_fields['user_ip']);
-        } else {
-            $this->_fields['user_ip'] = strval($ipAddress);
-        }
-
-        return $this;
+        return $this->setField('user_ip', $ipAddress);
     }
 
     // }}}
@@ -475,17 +476,11 @@ class Services_Akismet2_Comment
      */
     public function setUserAgent($userAgent)
     {
-        if ($userAgent === null) {
-            unset($this->_fields['user_agent']);
-        } else {
-            $this->_fields['user_agent'] = strval($userAgent);
-        }
-
-        return $this;
+        return $this->setField('user_agent', $userAgent);
     }
 
     // }}}
-    // {{{ setHttpReferer()
+    // {{{ setHttpReferrer()
 
     /**
      * Sets the HTTP referer of the user posting this comment
@@ -495,20 +490,14 @@ class Services_Akismet2_Comment
      * the HTTP referer to something different or if the current request does
      * not have a HTTP referer set.
      *
-     * @param string $httpReferer the HTTP referer of the user posting this
-     *                            comment.
+     * @param string $httpReferrer the HTTP referer of the user posting this
+     *                             comment.
      *
      * @return Services_Akismet2_Comment the comment object.
      */
-    public function setHttpReferer($httpReferer)
+    public function setHttpReferrer($httpReferrer)
     {
-        if ($httpReferer === null) {
-            unset($this->_fields['referrer']);
-        } else {
-            $this->_fields['referrer'] = strval($httpReferer);
-        }
-
-        return $this;
+        return $this->setField('referrer', $httpReferrer);
     }
 
     // }}}
