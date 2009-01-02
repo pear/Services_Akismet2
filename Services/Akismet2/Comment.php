@@ -232,8 +232,7 @@ class Services_Akismet2_Comment
      * Gets a string representation of this comment
      *
      * This is useful for debugging. All the set fields of this comment are
-     * returned as well as the results of
-     * {@link Services_Akismet2_Comment::getPostData()}.
+     * returned.
      *
      * @return string a string representation of this comment.
      */
@@ -241,13 +240,21 @@ class Services_Akismet2_Comment
     {
         $string = "Fields:\n\n";
         foreach ($this->_fields as $key => $value) {
-            $string .= "\t" . $key . " => " . $value ."\n";
+            $string .= "\t" . $key . " => " . $value . "\n";
         }
-        $string .= "\nPost Data:\n\n";
-        try {
-            $string .= "\t" . $this->getPostData() . "\n";
-        } catch (Services_Akismet2_InvalidCommentException $e) {
-            $string .= "\tmissing required fields\n";
+
+        $missingFields = array();
+        foreach (self::$_requiredFields as $field) {
+            if (!array_key_exists($field, $this->_fields)) {
+                $missingFields[] = $field;
+            }
+        }
+
+        if (count($missingFields) > 0) {
+            $string .= "\n\tMissing Required Fields:\n\n";
+            foreach ($missingFields as $field) {
+                $string .= "\t" . $field . "\n";
+            }
         }
 
         return $string;
