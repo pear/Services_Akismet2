@@ -140,26 +140,26 @@ class Services_Akismet2_TestCase extends PHPUnit_Framework_TestCase
         $this->addHttpResponse('false');
 
         $spamComment = new Services_Akismet2_Comment(array(
-            'author'      => 'viagra-test-123',
-            'authorEmail' => 'test@example.com',
-            'authorUri'   => 'http://example.com/',
-            'content'     => 'Spam, I am.',
-            'userIp'      => '127.0.0.1',
-            'userAgent'   => 'Services_Akismet2 unit tests',
-            'referrer'    => 'http://example.com/'
+            'comment_author'       => 'viagra-test-123',
+            'comment_author_email' => 'test@example.com',
+            'comment_author_url'   => 'http://example.com/',
+            'comment_content'      => 'Spam, I am.',
+            'user_ip'              => '127.0.0.1',
+            'user_agent'           => 'Services_Akismet2 unit tests',
+            'referrer'             => 'http://example.com/'
         ));
 
         $isSpam = $this->akismet->isSpam($spamComment);
         $this->assertTrue($isSpam);
 
         $comment = new Services_Akismet2_Comment(array(
-            'author'      => 'Services_Akismet2 unit tests',
-            'authorEmail' => 'test@example.com',
-            'authorUri'   => 'http://example.com/',
-            'content'     => 'Hello, World!',
-            'userIp'      => '127.0.0.1',
-            'userAgent'   => 'Services_Akismet2 unit tests',
-            'referrer'    => 'http://example.com/'
+            'comment_author'       => 'Services_Akismet2 unit tests',
+            'comment_author_email' => 'test@example.com',
+            'comment_author_url'   => 'http://example.com/',
+            'comment_content'      => 'Hello, World!',
+            'user_ip'              => '127.0.0.1',
+            'user_agent'           => 'Services_Akismet2 unit tests',
+            'referrer'             => 'http://example.com/'
         ));
 
         $isSpam = $this->akismet->isSpam($comment);
@@ -175,13 +175,13 @@ class Services_Akismet2_TestCase extends PHPUnit_Framework_TestCase
         $this->addHttpResponse('Thanks for making the web a better place.');
 
         $spamComment = new Services_Akismet2_Comment(array(
-            'author'      => 'viagra-test-123',
-            'authorEmail' => 'test@example.com',
-            'authorUri'   => 'http://example.com/',
-            'content'     => 'Spam, I am.',
-            'userIp'      => '127.0.0.1',
-            'userAgent'   => 'Services_Akismet2 unit tests',
-            'referrer'    => 'http://example.com/'
+            'comment_author'       => 'viagra-test-123',
+            'comment_author_email' => 'test@example.com',
+            'comment_author_url'   => 'http://example.com/',
+            'comment_content'      => 'Spam, I am.',
+            'user_ip'              => '127.0.0.1',
+            'user_agent'           => 'Services_Akismet2 unit tests',
+            'referrer'             => 'http://example.com/'
         ));
 
         $newAkismet = $this->akismet->submitSpam($spamComment);
@@ -199,13 +199,13 @@ class Services_Akismet2_TestCase extends PHPUnit_Framework_TestCase
         $this->addHttpResponse('Thanks for making the web a better place.');
 
         $comment = new Services_Akismet2_Comment(array(
-            'author'      => 'Services_Akismet2 unit tests',
-            'authorEmail' => 'test@example.com',
-            'authorUri'   => 'http://example.com/',
-            'content'     => 'Hello, World!',
-            'userIp'      => '127.0.0.1',
-            'userAgent'   => 'Services_Akismet2 unit tests',
-            'referrer'    => 'http://example.com/'
+            'comment_author'       => 'Services_Akismet2 unit tests',
+            'comment_author_email' => 'test@example.com',
+            'comment_author_url'   => 'http://example.com/',
+            'comment_content'      => 'Hello, World!',
+            'user_ip'              => '127.0.0.1',
+            'user_agent'           => 'Services_Akismet2 unit tests',
+            'referrer'             => 'http://example.com/'
         ));
 
         $newAkismet = $this->akismet->submitFalsePositive($comment);
@@ -225,13 +225,13 @@ class Services_Akismet2_TestCase extends PHPUnit_Framework_TestCase
         $this->addHttpResponse('invalid');
 
         $spamComment = new Services_Akismet2_Comment(array(
-            'author'      => 'viagra-test-123',
-            'authorEmail' => 'test@example.com',
-            'authorUri'   => 'http://example.com/',
-            'content'     => 'Spam, I am.',
-            'userIp'      => '127.0.0.1',
-            'userAgent'   => 'Services_Akismet2 unit tests',
-            'referrer'    => 'http://example.com/'
+            'comment_author'       => 'viagra-test-123',
+            'comment_author_email' => 'test@example.com',
+            'comment_author_url'   => 'http://example.com/',
+            'comment_content'      => 'Spam, I am.',
+            'user_ip'              => '127.0.0.1',
+            'user_agent'           => 'Services_Akismet2 unit tests',
+            'referrer'             => 'http://example.com/'
         ));
 
         // try to make a request
