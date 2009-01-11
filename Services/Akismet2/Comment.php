@@ -143,8 +143,7 @@ class Services_Akismet2_Comment
      */
     private static $_requiredFields = array(
         'user_ip',
-        'user_agent',
-        'referrer'
+        'user_agent'
     );
 
     /**
