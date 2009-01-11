@@ -247,6 +247,17 @@ class Services_Akismet2
      */
     protected $apiKeyIsValid = null;
 
+    /**
+     * The HTTP user-agent to use
+     *
+     * If this is an empty string, a default user-agent string is generated and
+     * used.
+     *
+     * @see Services_Akismet2::setConfig()
+     * @see Services_Akismet2::getUserAgent()
+     */
+    protected $userAgent = '';
+
     // }}}
     // {{{ __construct()
 
@@ -296,6 +307,9 @@ class Services_Akismet2
      *                           service provider.
      * - <kbd>apiPort</kbd>    - the HTTP port to use on the API server.
      * - <kbd>apiVersion</kbd> - the API version to use.
+     * - <kbd>userAgent</kbd>  - the HTTP user-agent to use. By default, the
+     *                           user-agent <kbd>@name@/@api-version@ |
+     *                           Akismet/1.1</kbd> is used.
      *
      * Example usage:
      * <code>
@@ -335,6 +349,10 @@ class Services_Akismet2
 
         if (array_key_exists('apiVersion', $options)) {
             $this->apiVersion = strval($options['apiVersion']);
+        }
+
+        if (array_key_exists('userAgent', $options)) {
+            $this->userAgent = strval($options['userAgent']);
         }
 
         return $this;
@@ -604,12 +622,21 @@ class Services_Akismet2
     /**
      * Gets the HTTP user-agent used to make Akismet requests
      *
-     * @return string the HTTP user-agent used to make Akismet request.
+     * @return string the HTTP user-agent used to make Akismet requests.
+     *
+     * @see Services_Akismet2::$userAgent
+     * @see Services_Akismet2::setConfig()
      */
     protected function getUserAgent()
     {
-        return sprintf('@name@/@api-version@ | Akismet/%s',
-            $this->apiVersion);
+        if ($this->userAgent == '') {
+            $userAgent = sprintf('@name@/@api-version@ | Akismet/%s',
+                $this->apiVersion);
+        } else {
+            $userAgent = $this->userAgent;
+        }
+
+        return $userAgent;
     }
 
     // }}}
