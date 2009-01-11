@@ -277,13 +277,6 @@ class Services_Akismet2_Comment
      */
     public function getPostParameters()
     {
-        foreach (self::$_requiredFields as $field) {
-            if (!array_key_exists($field, $this->_fields)) {
-                throw new Services_Akismet2_InvalidCommentException('Comment ' .
-                    'is missing required field: "' . $field . '".', 0, $this);
-            }
-        }
-
         $values = array();
 
         foreach ($this->_fields as $key => $value) {
@@ -294,6 +287,14 @@ class Services_Akismet2_Comment
             if (array_key_exists($key, $_SERVER)) {
                 $value = $_SERVER[$key];
                 $values[$key] = $value;
+            }
+        }
+
+        // make sure all required fields are set
+        foreach (self::$_requiredFields as $field) {
+            if (!array_key_exists($field, $values)) {
+                throw new Services_Akismet2_InvalidCommentException('Comment ' .
+                    'is missing required field: "' . $field . '".', 0, $this);
             }
         }
 
@@ -323,11 +324,6 @@ class Services_Akismet2_Comment
     }
 
     // }}}
-    
-    public function getFields() {
-        return $this->_fields;
-    }
-
     // {{{ setFields()
 
     /**
@@ -351,6 +347,22 @@ class Services_Akismet2_Comment
         }
 
         return $this;
+    }
+
+    // }}}
+    // {{{ getFields()
+
+    /**
+     * Gets the fields that are set for this comment
+     *
+     * Note: This method does not include extra server-related fields that are
+     * included in {@link Services_Akismet2_Comment::getPostParameters()}.
+     *
+     * @return array an array containing the fields set for this comment.
+     */
+    public function getFields()
+    {
+        return $this->_fields;
     }
 
     // }}}
