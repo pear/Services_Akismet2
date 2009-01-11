@@ -323,6 +323,11 @@ class Services_Akismet2_Comment
     }
 
     // }}}
+    
+    public function getFields() {
+        return $this->_fields;
+    }
+
     // {{{ setFields()
 
     /**
