@@ -348,22 +348,6 @@ class Services_Akismet2_CommentTestCase extends PHPUnit_Framework_TestCase
     }
 
     // }}}
-    // {{{ testGetPostParametersMissingReferrer()
-
-    /**
-     * @expectedException Services_Akismet2_InvalidCommentException
-     */
-    public function testGetPostParametersMissingReferrer()
-    {
-        $comment = new Services_Akismet2_Comment(array(
-            'user_ip'    => '127.0.0.1',
-            'user_agent' => 'Services_Akismet2 Unit Tests'
-        ));
-
-        $comment->getPostParameters();
-    }
-
-    // }}}
     // {{{ testSetField()
 
     public function testSetField()
