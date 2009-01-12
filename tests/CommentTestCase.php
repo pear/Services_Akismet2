@@ -280,8 +280,7 @@ class Services_Akismet2_CommentTestCase extends PHPUnit_Framework_TestCase
             "\tpermalink => http://example.com/post1\n" .
             "\n\tMissing Required Fields:\n\n" .
             "\tuser_ip\n" .
-            "\tuser_agent\n" .
-            "\treferrer\n";
+            "\tuser_agent\n";
 
         $comment = new Services_Akismet2_Comment($fields);
         $comment = strval($comment);
