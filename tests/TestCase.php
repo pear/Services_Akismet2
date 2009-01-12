@@ -136,88 +136,50 @@ class Services_Akismet2_TestCase extends PHPUnit_Framework_TestCase
 
     // }}}
 
-    // tests
-    // {{{ testIsSpam()
+    // general tests
+    // {{{ testConstructWithoutHttpRequest()
 
-    public function testIsSpam()
+    public function testConstructWithoutHttpRequest()
     {
-        $this->addHttpResponse('valid');
-        $this->addHttpResponse('true');
-        $this->addHttpResponse('false');
+        $akismet = new Services_Akismet2('http://test.example.com', 'test');
 
-        $spamComment = new Services_Akismet2_Comment(array(
-            'comment_author'       => 'viagra-test-123',
-            'comment_author_email' => 'test@example.com',
-            'comment_author_url'   => 'http://example.com/',
-            'comment_content'      => 'Spam, I am.',
-            'user_ip'              => '127.0.0.1',
-            'user_agent'           => 'Services_Akismet2 unit tests',
-            'referrer'             => 'http://example.com/'
-        ));
+        $constraint = $this->attribute(
+            $this->isInstanceOf('HTTP_Request2'), 'request'
+        );
 
-        $isSpam = $this->akismet->isSpam($spamComment);
-        $this->assertTrue($isSpam);
-
-        $comment = new Services_Akismet2_Comment(array(
-            'comment_author'       => 'Services_Akismet2 unit tests',
-            'comment_author_email' => 'test@example.com',
-            'comment_author_url'   => 'http://example.com/',
-            'comment_content'      => 'Hello, World!',
-            'user_ip'              => '127.0.0.1',
-            'user_agent'           => 'Services_Akismet2 unit tests',
-            'referrer'             => 'http://example.com/'
-        ));
-
-        $isSpam = $this->akismet->isSpam($comment);
-        $this->assertFalse($isSpam);
+        $this->assertThat($akismet, $constraint,
+            'A default HTTP Request object was not assigned in constructor.');
     }
 
     // }}}
-    // {{{ testSubmitSpam()
+    // {{{ testSetConfigWithSingleValue()
 
-    public function testSubmitSpam()
+    public function testSetConfigWithSingleValue()
     {
-        $this->addHttpResponse('valid');
-        $this->addHttpResponse('Thanks for making the web a better place.');
-
-        $spamComment = new Services_Akismet2_Comment(array(
-            'comment_author'       => 'viagra-test-123',
-            'comment_author_email' => 'test@example.com',
-            'comment_author_url'   => 'http://example.com/',
-            'comment_content'      => 'Spam, I am.',
-            'user_ip'              => '127.0.0.1',
-            'user_agent'           => 'Services_Akismet2 unit tests',
-            'referrer'             => 'http://example.com/'
-        ));
-
-        $newAkismet = $this->akismet->submitSpam($spamComment);
-
-        // test fluent interface
-        $this->assertSame($this->akismet, $newAkismet);
+        $this->akismet->setConfig('apiServer', 'http://akismet.example.com/');
+        $this->assertAttributeEquals('http://akismet.example.com/',
+            'apiServer', $this->akismet,
+            'Setting single config value \'apiServer\' failed.');
     }
 
     // }}}
-    // {{{ testSubmitFalsePositive()
+    // {{{ testSetConfigWithArray()
 
-    public function testSubmitFalsePositive()
+    public function testSetConfigWithArray()
     {
-        $this->addHttpResponse('valid');
-        $this->addHttpResponse('Thanks for making the web a better place.');
+        $config = array(
+            'apiServer'  => 'http://akismet.example.com/',
+            'apiPort'    => 8080,
+            'apiVersion' => '1.0',
+            'userAgent'  => 'Services_Akismet2 Unit Tests/2.0 | Akismet/1.1'
+        );
 
-        $comment = new Services_Akismet2_Comment(array(
-            'comment_author'       => 'Services_Akismet2 unit tests',
-            'comment_author_email' => 'test@example.com',
-            'comment_author_url'   => 'http://example.com/',
-            'comment_content'      => 'Hello, World!',
-            'user_ip'              => '127.0.0.1',
-            'user_agent'           => 'Services_Akismet2 unit tests',
-            'referrer'             => 'http://example.com/'
-        ));
+        $this->akismet->setConfig($config);
 
-        $newAkismet = $this->akismet->submitFalsePositive($comment);
-
-        // test fluent interface
-        $this->assertSame($this->akismet, $newAkismet);
+        foreach ($config as $name => $value) {
+            $this->assertAttributeEquals($value, $name, $this->akismet,
+                sprintf('Setting single config value \'%s\' failed.', $name));
+        }
     }
 
     // }}}
@@ -242,6 +204,309 @@ class Services_Akismet2_TestCase extends PHPUnit_Framework_TestCase
 
         // try to make a request
         $this->akismet->submitSpam($spamComment);
+    }
+
+    // }}}
+    // {{{ testFluentInterface()
+
+    public function testFluentInterface()
+    {
+        $this->addHttpResponse('valid');
+        $this->addHttpResponse('Thanks for making the web a better place.');
+        $this->addHttpResponse('Thanks for making the web a better place.');
+
+        // submitSpam()
+        $newAkismet = $this->akismet->submitSpam(array(
+            'comment_author'       => 'viagra-test-123',
+            'comment_author_email' => 'test@example.com',
+            'comment_author_url'   => 'http://example.com/',
+            'comment_content'      => 'Spam, I am.',
+            'user_ip'              => '127.0.0.1',
+            'user_agent'           => 'Services_Akismet2 unit tests',
+            'referrer'             => 'http://example.com/'
+        ));
+
+        $this->assertSame($this->akismet, $newAkismet);
+
+        // submitFalsePositive()
+        $newAkismet = $this->akismet->submitFalsePositive(array(
+            'comment_author'       => 'Services_Akismet2 unit tests',
+            'comment_author_email' => 'test@example.com',
+            'comment_author_url'   => 'http://example.com/',
+            'comment_content'      => 'Hello, World!',
+            'user_ip'              => '127.0.0.1',
+            'user_agent'           => 'Services_Akismet2 unit tests',
+            'referrer'             => 'http://example.com/'
+        ));
+
+        $this->assertSame($this->akismet, $newAkismet);
+
+        // setConfig()
+        $newAkismet = $this->akismet->setConfig('apiPort', 8080);
+        $this->assertSame($this->akismet, $newAkismet);
+
+        // setRequest()
+        $newAkismet = $this->akismet->setRequest(new HTTP_Request2());
+        $this->assertSame($this->akismet, $newAkismet);
+    }
+
+    // }}}
+
+    // Akismet API tests
+    // {{{ testIsSpamYes()
+
+    public function testIsSpamYes()
+    {
+        $this->addHttpResponse('valid');
+        $this->addHttpResponse('true');
+
+        $spamComment = new Services_Akismet2_Comment(array(
+            'comment_author'       => 'viagra-test-123',
+            'comment_author_email' => 'test@example.com',
+            'comment_author_url'   => 'http://example.com/',
+            'comment_content'      => 'Spam, I am.',
+            'user_ip'              => '127.0.0.1',
+            'user_agent'           => 'Services_Akismet2 unit tests',
+            'referrer'             => 'http://example.com/'
+        ));
+
+        $isSpam = $this->akismet->isSpam($spamComment);
+        $this->assertTrue($isSpam);
+    }
+
+    // }}}
+    // {{{ testIsSpamNo()
+
+    public function testIsSpamNo()
+    {
+        $this->addHttpResponse('valid');
+        $this->addHttpResponse('false');
+
+        $comment = new Services_Akismet2_Comment(array(
+            'comment_author'       => 'Services_Akismet2 unit tests',
+            'comment_author_email' => 'test@example.com',
+            'comment_author_url'   => 'http://example.com/',
+            'comment_content'      => 'Hello, World!',
+            'user_ip'              => '127.0.0.1',
+            'user_agent'           => 'Services_Akismet2 unit tests',
+            'referrer'             => 'http://example.com/'
+        ));
+
+        $isSpam = $this->akismet->isSpam($comment);
+        $this->assertFalse($isSpam);
+    }
+
+    // }}}
+    // {{{ testIsSpamWithArray()
+
+    public function testIsSpamWithArray()
+    {
+        $this->addHttpResponse('valid');
+        $this->addHttpResponse('true');
+        $this->addHttpResponse('false');
+
+        $isSpam = $this->akismet->isSpam(array(
+            'comment_author'       => 'viagra-test-123',
+            'comment_author_email' => 'test@example.com',
+            'comment_author_url'   => 'http://example.com/',
+            'comment_content'      => 'Spam, I am.',
+            'user_ip'              => '127.0.0.1',
+            'user_agent'           => 'Services_Akismet2 unit tests',
+            'referrer'             => 'http://example.com/'
+        ));
+
+        $this->assertTrue($isSpam);
+
+        $isSpam = $this->akismet->isSpam(array(
+            'comment_author'       => 'Services_Akismet2 unit tests',
+            'comment_author_email' => 'test@example.com',
+            'comment_author_url'   => 'http://example.com/',
+            'comment_content'      => 'Hello, World!',
+            'user_ip'              => '127.0.0.1',
+            'user_agent'           => 'Services_Akismet2 unit tests',
+            'referrer'             => 'http://example.com/'
+        ));
+
+        $this->assertFalse($isSpam);
+    }
+
+    // }}}
+    // {{{ testIsSpamInvalidCommentException()
+
+    /**
+     * @expectedException Services_Akismet2_InvalidCommentException
+     */
+    public function testIsSpamInvalidCommentException()
+    {
+        $this->addHttpResponse('valid');
+        $this->addHttpResponse('true');
+
+        $spamComment = new Services_Akismet2_Comment(array(
+            'comment_author'       => 'viagra-test-123',
+            'comment_author_email' => 'test@example.com',
+            'comment_author_url'   => 'http://example.com/',
+            'comment_content'      => 'Spam, I am.'
+        ));
+
+        $isSpam = $this->akismet->isSpam($spamComment);
+    }
+
+    // }}}
+    // {{{ testIsSpamInvalidArgumentException()
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testIsSpamInvalidArgumentException()
+    {
+        $this->addHttpResponse('valid');
+        $isSpam = $this->akismet->isSpam('test');
+    }
+
+    // }}}
+
+    // {{{ testSubmitSpam()
+
+    public function testSubmitSpam()
+    {
+        $this->addHttpResponse('valid');
+        $this->addHttpResponse('Thanks for making the web a better place.');
+
+        $spamComment = new Services_Akismet2_Comment(array(
+            'comment_author'       => 'viagra-test-123',
+            'comment_author_email' => 'test@example.com',
+            'comment_author_url'   => 'http://example.com/',
+            'comment_content'      => 'Spam, I am.',
+            'user_ip'              => '127.0.0.1',
+            'user_agent'           => 'Services_Akismet2 unit tests',
+            'referrer'             => 'http://example.com/'
+        ));
+
+        $this->akismet->submitSpam($spamComment);
+    }
+
+    // }}}
+    // {{{ testSubmitSpamWithArray()
+
+    public function testSubmitSpamWithArray()
+    {
+        $this->addHttpResponse('valid');
+        $this->addHttpResponse('Thanks for making the web a better place.');
+
+        $this->akismet->submitSpam(array(
+            'comment_author'       => 'viagra-test-123',
+            'comment_author_email' => 'test@example.com',
+            'comment_author_url'   => 'http://example.com/',
+            'comment_content'      => 'Spam, I am.',
+            'user_ip'              => '127.0.0.1',
+            'user_agent'           => 'Services_Akismet2 unit tests',
+            'referrer'             => 'http://example.com/'
+        ));
+    }
+
+    // }}}
+    // {{{ testSubmitSpamInvalidCommentException()
+
+    /**
+     * @expectedException Services_Akismet2_InvalidCommentException
+     */
+    public function testSubmitSpamInvalidCommentException()
+    {
+        $this->addHttpResponse('valid');
+
+        $spamComment = new Services_Akismet2_Comment(array(
+            'comment_author'       => 'viagra-test-123',
+            'comment_author_email' => 'test@example.com',
+            'comment_author_url'   => 'http://example.com/',
+            'comment_content'      => 'Spam, I am.'
+        ));
+
+        $this->akismet->submitSpam($spamComment);
+    }
+
+    // }}}
+    // {{{ testSubmitSpamInvalidArgumentException()
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testSubmitSpamInvalidArgumentException()
+    {
+        $this->addHttpResponse('valid');
+        $this->akismet->submitSpam('test');
+    }
+
+    // }}}
+
+    // {{{ testSubmitFalsePositive()
+
+    public function testSubmitFalsePositive()
+    {
+        $this->addHttpResponse('valid');
+        $this->addHttpResponse('Thanks for making the web a better place.');
+
+        $comment = new Services_Akismet2_Comment(array(
+            'comment_author'       => 'Services_Akismet2 unit tests',
+            'comment_author_email' => 'test@example.com',
+            'comment_author_url'   => 'http://example.com/',
+            'comment_content'      => 'Hello, World!',
+            'user_ip'              => '127.0.0.1',
+            'user_agent'           => 'Services_Akismet2 unit tests',
+            'referrer'             => 'http://example.com/'
+        ));
+
+        $this->akismet->submitFalsePositive($comment);
+    }
+
+    // }}}
+    // {{{ testSubmitFalsePositiveWithArray()
+
+    public function testSubmitFalsePositiveWithArray()
+    {
+        $this->addHttpResponse('valid');
+        $this->addHttpResponse('Thanks for making the web a better place.');
+
+        $this->akismet->submitFalsePositive(array(
+            'comment_author'       => 'Services_Akismet2 unit tests',
+            'comment_author_email' => 'test@example.com',
+            'comment_author_url'   => 'http://example.com/',
+            'comment_content'      => 'Hello, World!',
+            'user_ip'              => '127.0.0.1',
+            'user_agent'           => 'Services_Akismet2 unit tests',
+            'referrer'             => 'http://example.com/'
+        ));
+    }
+
+    // }}}
+    // {{{ testSubmitFalsePositiveInvalidCommentException()
+
+    /**
+     * @expectedException Services_Akismet2_InvalidCommentException
+     */
+    public function testSubmitFalsePositiveInvalidCommentException()
+    {
+        $this->addHttpResponse('valid');
+
+        $spamComment = new Services_Akismet2_Comment(array(
+            'comment_author'       => 'test',
+            'comment_author_email' => 'test@example.com',
+            'comment_author_url'   => 'http://example.com/',
+            'comment_content'      => 'Hello, World!'
+        ));
+
+        $this->akismet->submitFalsePositive($spamComment);
+    }
+
+    // }}}
+    // {{{ testSubmitFalsePositiveInvalidArgumentException()
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testSubmitFalsePositiveInvalidArgumentException()
+    {
+        $this->addHttpResponse('valid');
+        $this->akismet->submitFalsePositive('test');
     }
 
     // }}}
