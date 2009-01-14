@@ -40,14 +40,28 @@
 require_once 'PEAR/PackageFileManager2.php';
 PEAR::setErrorHandling(PEAR_ERROR_DIE);
 
-$api_version     = '0.1.1';
+$api_version     = '0.3.0';
 $api_state       = 'alpha';
 
-$release_version = '0.1.1';
+$release_version = '0.3.0';
 $release_state   = 'alpha';
 $release_notes   =
-    " * Fix setting HTTP referer in comment constructor.\n" .
-    " * Update unit tests to use mock HTTP objects.\n";
+    " * Fixed Bug #15567: Exception is thrown when referrer is not set in " .
+    "comment.\n" .
+    " * Fixed Req #15569: Ability to set a custom user-agent.\n" .
+    " * Fixed Bug #15571: Don't always include server-related fields. There " .
+    "is a new parameter on the isSpam() method to auto-set server-related " .
+    "fields.\n" .
+    " * API doc cleanups.\n" .
+    " * Wrote end-user documentation (PEAR manual is not up-to-date yet, but " .
+    "source files are in CVS).\n" .
+    " * More complete unit tests.\n" .
+    " * Fix bug in 0.2.0 that caused incorrect host to be used to requests " .
+    "requiring an API key.\n" .
+    " * Allow specifying comment as an array rather than an object.\n" .
+    " * Make \$fields property of comment class protected for easier " .
+    "sub-classing of the comment class.\n" .
+    " * PHPCS cleanups.\n";
 
 $description =
     "This package provides an object-oriented interface to the Akismet REST " .
@@ -85,8 +99,10 @@ $package->setSummary('PHP client for the Akismet REST API');
 $package->setDescription($description);
 $package->setChannel('pear.php.net');
 $package->setPackageType('php');
-$package->setLicense('MIT',
-    'http://www.opensource.org/licenses/mit-license.html');
+$package->setLicense(
+    'MIT',
+    'http://www.opensource.org/licenses/mit-license.html'
+);
 
 $package->setNotes($release_notes);
 $package->setReleaseVersion($release_version);
@@ -94,19 +110,35 @@ $package->setReleaseStability($release_state);
 $package->setAPIVersion($api_version);
 $package->setAPIStability($api_state);
 
-$package->addMaintainer('lead', 'gauthierm', 'Mike Gauthier',
-    'mike@silverorange.com');
+$package->addMaintainer(
+    'lead',
+    'gauthierm',
+    'Mike Gauthier',
+    'mike@silverorange.com'
+);
 
-$package->addReplacement('Services/Akismet.php', 'package-info',
-    '@api-version@', 'api-version');
+$package->addReplacement(
+    'Services/Akismet.php',
+    'package-info',
+    '@api-version@',
+    'api-version'
+);
 
-$package->addReplacement('Services/Akismet.php', 'package-info',
-    '@name@', 'name');
+$package->addReplacement(
+    'Services/Akismet.php',
+    'package-info',
+    '@name@',
+    'name'
+);
 
 $package->setPhpDep('5.2.1');
 
-$package->addPackageDepWithChannel('required', 'HTTP_Request2',
-    'pear.php.net', '0.1.0');
+$package->addPackageDepWithChannel(
+    'required',
+    'HTTP_Request2',
+    'pear.php.net',
+    '0.1.0'
+);
 
 $package->setPearinstallerDep('1.4.0');
 $package->generateContents();
