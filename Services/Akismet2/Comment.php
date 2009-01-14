@@ -266,6 +266,10 @@ class Services_Akismet2_Comment
      * Gets the fields of this comment as an array of name-value pairs for use
      * in an Akismet API method
      *
+     * @param boolean $autoSetServerFields optional. Whether or not to
+     *                                     automatically set server-related
+     *                                     fields. Defaults to false.
+     *
      * @return array the fields of this comment as an array of name-value pairs
      *                suitable for usage in an Akismet API method.
      *
@@ -274,7 +278,7 @@ class Services_Akismet2_Comment
      *
      * @see http://akismet.com/development/api/#comment-check
      */
-    public function getPostParameters()
+    public function getPostParameters($autoSetServerFields = false)
     {
         $values = array();
 
@@ -282,10 +286,12 @@ class Services_Akismet2_Comment
             $values[$key] = $value;
         }
 
-        foreach (self::$_allowedServerVars as $key) {
-            if (array_key_exists($key, $_SERVER)) {
-                $value = $_SERVER[$key];
-                $values[$key] = $value;
+        if ($autoSetServerFields) {
+            foreach (self::$_allowedServerVars as $key) {
+                if (array_key_exists($key, $_SERVER)) {
+                    $value = $_SERVER[$key];
+                    $values[$key] = $value;
+                }
             }
         }
 

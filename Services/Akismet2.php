@@ -364,7 +364,22 @@ class Services_Akismet2
     /**
      * Checks whether or not a comment is spam
      *
-     * @param Services_Akismet2_Comment|array $comment the comment to check.
+     * When checking if a comment is spam, it is possible to set the required
+     * fields, and several other server-related fields automatically. When
+     * the server-related fields are set automatically, usually only the
+     * content-related fields of the comment need to be specified manually.
+     *
+     *
+     * Note: Only auto-set server-related fields on comments checked in
+     * real-time. If you check comments using an external system, you run the
+     * risk of submitting your own server information as spam. Instead, save
+     * the server-related fields in the database and set them on the comment
+     * using {@link Services_Akismet2_Comment::setField()}.
+     *
+     * @param Services_Akismet2_Comment|array $comment             the comment
+     *        to check.
+     * @param boolean                         $autoSetServerFields whether or
+     *        not to automatically set server-related fields. Defaults to false.
      *
      * @return boolean true if the comment is spam and false if it is not.
      *
@@ -380,7 +395,7 @@ class Services_Akismet2
      * @throws InvalidArgumentException if the provided comment is neither an
      *         array not an instanceof Services_Akismet2_Comment.
      */
-    public function isSpam($comment)
+    public function isSpam($comment, $autoSetServerFields = false)
     {
         if (is_array($comment)) {
             $comment = new Services_Akismet2_Comment($comment);
@@ -393,7 +408,7 @@ class Services_Akismet2
 
         $this->validateApiKey();
 
-        $params         = $comment->getPostParameters();
+        $params         = $comment->getPostParameters($autoSetServerFields);
         $params['blog'] = $this->blogUri;
 
         $response = $this->sendRequest('comment-check', $params, $this->apiKey);
