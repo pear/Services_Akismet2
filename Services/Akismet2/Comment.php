@@ -85,6 +85,18 @@ require_once 'Services/Akismet2/InvalidCommentException.php';
  */
 class Services_Akismet2_Comment
 {
+    // {{{ protected properties
+
+    /**
+     * Fields of this comment
+     *
+     * @var array
+     *
+     * @see http://akismet.com/development/api/#comment-check
+     */
+    protected $fields = array();
+
+    // }}}
     // {{{ private properties
 
     /**
@@ -145,16 +157,6 @@ class Services_Akismet2_Comment
         'user_ip',
         'user_agent'
     );
-
-    /**
-     * Fields of this comment
-     *
-     * @var array
-     *
-     * @see http://akismet.com/development/api/#comment-check
-     */
-    private $_fields = array();
-
     // }}}
     // {{{ __construct()
 
@@ -209,15 +211,15 @@ class Services_Akismet2_Comment
     {
         // set default values from request
         if (array_key_exists('REMOTE_ADDR', $_SERVER)) {
-            $this->_fields['user_ip'] = $_SERVER['REMOTE_ADDR'];
+            $this->fields['user_ip'] = $_SERVER['REMOTE_ADDR'];
         }
 
         if (array_key_exists('HTTP_USER_AGENT', $_SERVER)) {
-            $this->_fields['user_agent'] = $_SERVER['HTTP_USER_AGENT'];
+            $this->fields['user_agent'] = $_SERVER['HTTP_USER_AGENT'];
         }
 
         if (array_key_exists('HTTP_REFERER', $_SERVER)) {
-            $this->_fields['referrer'] = $_SERVER['HTTP_REFERER'];
+            $this->fields['referrer'] = $_SERVER['HTTP_REFERER'];
         }
 
         // set from fields
@@ -238,13 +240,13 @@ class Services_Akismet2_Comment
     public function __toString()
     {
         $string = "Fields:\n\n";
-        foreach ($this->_fields as $key => $value) {
+        foreach ($this->fields as $key => $value) {
             $string .= "\t" . $key . " => " . $value . "\n";
         }
 
         $missingFields = array();
         foreach (self::$_requiredFields as $field) {
-            if (!array_key_exists($field, $this->_fields)) {
+            if (!array_key_exists($field, $this->fields)) {
                 $missingFields[] = $field;
             }
         }
@@ -282,7 +284,7 @@ class Services_Akismet2_Comment
     {
         $values = array();
 
-        foreach ($this->_fields as $key => $value) {
+        foreach ($this->fields as $key => $value) {
             $values[$key] = $value;
         }
 
@@ -323,7 +325,7 @@ class Services_Akismet2_Comment
      */
     public function setField($name, $value)
     {
-        $this->_fields[strval($name)] = strval($value);
+        $this->fields[strval($name)] = strval($value);
 
         return $this;
     }
@@ -367,7 +369,7 @@ class Services_Akismet2_Comment
      */
     public function getFields()
     {
-        return $this->_fields;
+        return $this->fields;
     }
 
     // }}}
