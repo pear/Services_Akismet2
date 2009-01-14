@@ -111,7 +111,8 @@ class Services_Akismet2_TestCase extends PHPUnit_Framework_TestCase
         $request = new HTTP_Request2();
         $request->setAdapter($this->mock);
 
-        $this->akismet = new Services_Akismet2('', '', array(), $request);
+        $this->akismet = new Services_Akismet2('http://blog.example.com/',
+            'AABBCCDDEEFF', array(), $request);
     }
 
     // }}}
