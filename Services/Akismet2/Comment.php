@@ -157,6 +157,7 @@ class Services_Akismet2_Comment
         'user_ip',
         'user_agent'
     );
+
     // }}}
     // {{{ __construct()
 
