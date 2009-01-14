@@ -76,12 +76,43 @@ class Services_Akismet2_CommentTestCase extends PHPUnit_Framework_TestCase
     private $_oldErrorLevel;
 
     /**
+     * $_SERVER vars to backup
+     *
      * @var array
      */
     private $_serverVarNames = array(
         'REMOTE_ADDR',
+        'SCRIPT_URI',
+        'HTTP_HOST',
         'HTTP_USER_AGENT',
-        'HTTP_REFERER'
+        'HTTP_ACCEPT',
+        'HTTP_ACCEPT_LANGUAGE',
+        'HTTP_ACCEPT_ENCODING',
+        'HTTP_ACCEPT_CHARSET',
+        'HTTP_KEEP_ALIVE',
+        'HTTP_CONNECTION',
+        'HTTP_CACHE_CONTROL',
+        'HTTP_PRAGMA',
+        'HTTP_REFERER',
+        'HTTP_DATE',
+        'HTTP_EXPECT',
+        'HTTP_MAX_FORWARDS',
+        'HTTP_RANGE',
+        'CONTENT_TYPE',
+        'CONTENT_LENGTH',
+        'SERVER_SIGNATURE',
+        'SERVER_SOFTWARE',
+        'SERVER_NAME',
+        'SERVER_ADDR',
+        'SERVER_PORT',
+        'REMOTE_PORT',
+        'GATEWAY_INTERFACE',
+        'SERVER_PROTOCOL',
+        'REQUEST_METHOD',
+        'QUERY_STRING',
+        'REQUEST_URI',
+        'SCRIPT_NAME',
+        'REQUEST_TIME'
     );
 
     /**
@@ -186,7 +217,7 @@ class Services_Akismet2_CommentTestCase extends PHPUnit_Framework_TestCase
     {
         $fields = array(
             'comment_author'       => 'Test Author',
-            'comment_author_email' => 'test@exmaple.com',
+            'comment_author_email' => 'test@example.com',
             'comment_author_url'   => 'http://myblog.example.com/',
             'comment_content'      => 'Hello, World!',
             'comment_type'         => 'comment',
@@ -230,7 +261,7 @@ class Services_Akismet2_CommentTestCase extends PHPUnit_Framework_TestCase
     {
         $fields = array(
             'comment_author'       => 'Test Author',
-            'comment_author_email' => 'test@exmaple.com',
+            'comment_author_email' => 'test@example.com',
             'comment_author_url'   => 'http://myblog.example.com/',
             'comment_content'      => 'Hello, World!',
             'comment_type'         => 'comment',
@@ -242,7 +273,7 @@ class Services_Akismet2_CommentTestCase extends PHPUnit_Framework_TestCase
 
         $string = "Fields:\n\n" .
             "\tcomment_author => Test Author\n" .
-            "\tcomment_author_email => test@exmaple.com\n" .
+            "\tcomment_author_email => test@example.com\n" .
             "\tcomment_author_url => http://myblog.example.com/\n" .
             "\tcomment_content => Hello, World!\n" .
             "\tcomment_type => comment\n" .
@@ -264,7 +295,7 @@ class Services_Akismet2_CommentTestCase extends PHPUnit_Framework_TestCase
     {
         $fields = array(
             'comment_author'       => 'Test Author',
-            'comment_author_email' => 'test@exmaple.com',
+            'comment_author_email' => 'test@example.com',
             'comment_author_url'   => 'http://myblog.example.com/',
             'comment_content'      => 'Hello, World!',
             'comment_type'         => 'comment',
@@ -273,7 +304,7 @@ class Services_Akismet2_CommentTestCase extends PHPUnit_Framework_TestCase
 
         $string = "Fields:\n\n" .
             "\tcomment_author => Test Author\n" .
-            "\tcomment_author_email => test@exmaple.com\n" .
+            "\tcomment_author_email => test@example.com\n" .
             "\tcomment_author_url => http://myblog.example.com/\n" .
             "\tcomment_content => Hello, World!\n" .
             "\tcomment_type => comment\n" .
@@ -295,7 +326,7 @@ class Services_Akismet2_CommentTestCase extends PHPUnit_Framework_TestCase
     {
         $fields = array(
             'comment_author'       => 'Test Author',
-            'comment_author_email' => 'test@exmaple.com',
+            'comment_author_email' => 'test@example.com',
             'comment_author_url'   => 'http://myblog.example.com/',
             'comment_content'      => 'Hello, World!',
             'comment_type'         => 'comment',
@@ -308,10 +339,7 @@ class Services_Akismet2_CommentTestCase extends PHPUnit_Framework_TestCase
         $comment = new Services_Akismet2_Comment($fields);
 
         $parameters = $comment->getPostParameters();
-        foreach ($fields as $name => $value) {
-            $this->assertArrayHasKey($name, $parameters);
-            $this->assertEquals($value, $parameters[$name]);
-        }
+        $this->assertEquals($fields, $parameters);
     }
 
     // }}}
@@ -323,8 +351,7 @@ class Services_Akismet2_CommentTestCase extends PHPUnit_Framework_TestCase
     public function testGetPostParametersMissingUserAgent()
     {
         $comment = new Services_Akismet2_Comment(array(
-            'user_ip'  => '127.0.0.1',
-            'referrer' => 'http://example.com'
+            'user_ip'  => '127.0.0.1'
         ));
 
         $comment->getPostParameters();
@@ -339,11 +366,80 @@ class Services_Akismet2_CommentTestCase extends PHPUnit_Framework_TestCase
     public function testGetPostParametersMissingUserIp()
     {
         $comment = new Services_Akismet2_Comment(array(
-            'user_agent' => 'Services_Akismet2 Unit Tests',
-            'referrer'   => 'http://example.com'
+            'user_agent' => 'Services_Akismet2 Unit Tests'
         ));
 
         $comment->getPostParameters();
+    }
+
+    // }}}
+    // {{{ testGetPostParametersWithServerFields()
+
+    public function testGetPostParametersWithServerFields()
+    {
+        // fake $_SERVER fields for testing
+        $serverFields = array(
+            'SCRIPT_URI'           => 'http://example.com/akismet-tests',
+            'HTTP_HOST'            => 'example.com',
+            'HTTP_USER_AGENT'      => 'Mozilla/5.0 (Linux) Firefox 3.0.5',
+            'HTTP_ACCEPT'          => 'text/html,application/xml',
+            'HTTP_ACCEPT_LANGUAGE' => 'en-us,en',
+            'HTTP_ACCEPT_ENCODING' => 'gzip,deflate',
+            'HTTP_ACCEPT_CHARSET'  => 'utf-8',
+            'HTTP_KEEP_ALIVE'      => '300',
+            'HTTP_CONNECTION'      => 'keep-alive',
+            'HTTP_CACHE_CONTROL'   => 'max-age=0',
+            'HTTP_PRAGMA'          => 'Apache/2.2.9 Server at example.com',
+            'HTTP_DATE'            => 'Wed, 22 Dec 2004 11:34:47 GMT',
+            'HTTP_EXPECT'          => '100-continue',
+            'HTTP_MAX_FORWARDS'    => '10',
+            'HTTP_RANGE'           => '0-134 bytes',
+            'CONTENT_TYPE'         => 'application/x-www-form-urlencoded',
+            'CONTENT_LENGTH'       => '134',
+            'SERVER_SIGNATURE'     => 'Apache/2.2.9 Server at example.com',
+            'SERVER_SOFTWARE'      => 'Apache/2.2.9 (Fedora)',
+            'SERVER_NAME'          => 'example',
+            'SERVER_ADDR'          => '127.0.0.255',
+            'SERVER_PORT'          => '80',
+            'REMOTE_PORT'          => '34623',
+            'GATEWAY_INTERFACE'    => 'CGI/1.1',
+            'SERVER_PROTOCOL'      => 'HTTP/1.1',
+            'REQUEST_METHOD'       => 'POST',
+            'QUERY_STRING'         => '',
+            'REQUEST_URI'          => '/web/scripts/akismet-tests.php',
+            'SCRIPT_NAME'          => '/web/scripts/akismet-tests.php',
+            'REQUEST_TIME'         => 1231946955
+        );
+
+        foreach ($serverFields as $name => $value) {
+            $_SERVER[$name] = $value;
+        }
+
+        $fields = array(
+            'comment_author'       => 'Test Author',
+            'comment_author_email' => 'test@example.com',
+            'comment_author_url'   => 'http://myblog.example.com/',
+            'comment_content'      => 'Hello, World!',
+            'comment_type'         => 'comment',
+            'permalink'            => 'http://example.com/post1',
+            'user_ip'              => '127.0.0.1',
+            'user_agent'           => 'Mozilla/5.0 (Linux) Firefox 3.0.5',
+            'referrer'             => 'http://example.com/',
+        );
+
+        $comment = new Services_Akismet2_Comment($fields);
+
+        $parameters = $comment->getPostParameters(true);
+
+        foreach ($fields as $name => $value) {
+            $this->assertArrayHasKey($name, $parameters);
+            $this->assertEquals($value, $parameters[$name]);
+        }
+
+        foreach ($serverFields as $name => $value) {
+            $this->assertArrayHasKey($name, $parameters);
+            $this->assertEquals($value, $parameters[$name]);
+        }
     }
 
     // }}}
