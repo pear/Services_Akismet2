@@ -20,19 +20,27 @@ This package is derived from the miPHP Akismet class written by Bret Kuhns for u
   <email>mike@silverorange.com</email>
   <active>yes</active>
  </lead>
- <date>2008-12-29</date>
- <time>01:45:19</time>
+ <date>2009-01-14</date>
+ <time>15:47:14</time>
  <version>
-  <release>0.1.1</release>
-  <api>0.1.1</api>
+  <release>0.3.0</release>
+  <api>0.3.0</api>
  </version>
  <stability>
   <release>alpha</release>
   <api>alpha</api>
  </stability>
  <license uri="http://www.opensource.org/licenses/mit-license.html">MIT</license>
- <notes> * Fix setting HTTP referer in comment constructor.
- * Update unit tests to use mock HTTP objects.
+ <notes> * Fixed Bug #15567: Exception is thrown when referrer is not set in comment.
+ * Fixed Req #15569: Ability to set a custom user-agent.
+ * Fixed Bug #15571: Don&apos;t always include server-related fields. There is a new parameter on the isSpam() method to auto-set server-related fields.
+ * API doc cleanups.
+ * Wrote end-user documentation (PEAR manual is not up-to-date yet, but source files are in CVS).
+ * More complete unit tests.
+ * Fix bug in 0.2.0 that caused incorrect host to be used to requests requiring an API key.
+ * Allow specifying comment as an array rather than an object.
+ * Make $fields property of comment class protected for easier sub-classing of the comment class.
+ * PHPCS cleanups.
  </notes>
  <contents>
   <dir baseinstalldir="/" name="/">
@@ -47,6 +55,8 @@ This package is derived from the miPHP Akismet class written by Bret Kuhns for u
    </dir> <!-- /Services -->
    <dir name="tests">
     <file name="AllTests.php" role="test" />
+    <file name="CommentTestCase.php" role="test" />
+    <file name="ExceptionsTestCase.php" role="test" />
     <file name="TestCase.php" role="test" />
    </dir> <!-- /tests -->
   </dir> <!-- / -->
@@ -70,17 +80,25 @@ This package is derived from the miPHP Akismet class written by Bret Kuhns for u
  <changelog>
   <release>
    <version>
-    <release>0.1.1</release>
-    <api>0.1.1</api>
+    <release>0.3.0</release>
+    <api>0.3.0</api>
    </version>
    <stability>
     <release>alpha</release>
     <api>alpha</api>
    </stability>
-   <date>2008-12-29</date>
+   <date>2009-01-14</date>
    <license uri="http://www.opensource.org/licenses/mit-license.html">MIT</license>
-   <notes> * Fix setting HTTP referer in comment constructor.
- * Update unit tests to use mock HTTP objects.
+   <notes> * Fixed Bug #15567: Exception is thrown when referrer is not set in comment.
+ * Fixed Req #15569: Ability to set a custom user-agent.
+ * Fixed Bug #15571: Don&apos;t always include server-related fields. There is a new parameter on the isSpam() method to auto-set server-related fields.
+ * API doc cleanups.
+ * Wrote end-user documentation (PEAR manual is not up-to-date yet, but source files are in CVS).
+ * More complete unit tests.
+ * Fix bug in 0.2.0 that caused incorrect host to be used to requests requiring an API key.
+ * Allow specifying comment as an array rather than an object.
+ * Make $fields property of comment class protected for easier sub-classing of the comment class.
+ * PHPCS cleanups.
    </notes>
   </release>
  </changelog>
