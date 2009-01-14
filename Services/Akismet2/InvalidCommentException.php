@@ -85,8 +85,8 @@ class Services_Akismet2_InvalidCommentException extends PEAR_Exception
      * @param Services_Akismet2_Comment $comment the invalid comment.
      */
     public function __construct($message, $code,
-        Services_Akismet2_Comment $comment)
-    {
+        Services_Akismet2_Comment $comment
+    ) {
         parent::__construct($message, $code);
         $this->_comment = $comment;
     }

@@ -276,8 +276,8 @@ class Services_Akismet2
      * @see Services_Akismet2::setConfig()
      */
     public function __construct($blogUri, $apiKey, array $config = array(),
-        HTTP_Request2 $request = null)
-    {
+        HTTP_Request2 $request = null
+    ) {
         $this->blogUri = $blogUri;
         $this->apiKey  = $apiKey;
 
@@ -546,19 +546,21 @@ class Services_Akismet2
      *         communicating with the Akismet API server.
      */
     protected function sendRequest($methodName, array $params = array(),
-        $apiKey = '')
-    {
+        $apiKey = ''
+    ) {
         if ($apiKey == '') {
             $host = $this->apiServer;
         } else {
             $host = $apiKey . '.' . $this->apiServer;
         }
 
-        $url = sprintf('http://%s:%s/%s/%s',
+        $url = sprintf(
+            'http://%s:%s/%s/%s',
             $host,
             $this->apiPort,
             $this->apiVersion,
-            $methodName);
+            $methodName
+        );
 
         try {
             /*
@@ -649,8 +651,10 @@ class Services_Akismet2
     protected function getUserAgent()
     {
         if ($this->userAgent == '') {
-            $userAgent = sprintf('@name@/@api-version@ | Akismet/%s',
-                $this->apiVersion);
+            $userAgent = sprintf(
+                '@name@/@api-version@ | Akismet/%s',
+                $this->apiVersion
+            );
         } else {
             $userAgent = $this->userAgent;
         }
