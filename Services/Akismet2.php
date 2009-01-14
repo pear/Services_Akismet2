@@ -396,7 +396,7 @@ class Services_Akismet2
         $params         = $comment->getPostParameters();
         $params['blog'] = $this->blogUri;
 
-        $response = $this->sendRequest('comment-check', $params);
+        $response = $this->sendRequest('comment-check', $params, $this->apiKey);
 
         return ($response == 'true');
     }
@@ -443,7 +443,7 @@ class Services_Akismet2
         $params         = $comment->getPostParameters();
         $params['blog'] = $this->blogUri;
 
-        $this->sendRequest('submit-spam', $params);
+        $this->sendRequest('submit-spam', $params, $this->apiKey);
 
         return $this;
     }
@@ -490,7 +490,7 @@ class Services_Akismet2
         $params         = $comment->getPostParameters();
         $params['blog'] = $this->blogUri;
 
-        $this->sendRequest('submit-ham', $params);
+        $this->sendRequest('submit-ham', $params, $this->apiKey);
 
         return $this;
     }
@@ -521,18 +521,22 @@ class Services_Akismet2
      * @param string $methodName the name of the Akismet method to call.
      * @param array  $params     optional. Array of request parameters for the
      *                           Akismet call.
+     * @param string $apiKey     optional. The API key to use. Not required if
+     *                           verifying an API key. Required for all other
+     *                           request types.
      *
      * @return string the HTTP response content.
      *
      * @throws Services_Akismet2_HttpException if there is an error
      *         communicating with the Akismet API server.
      */
-    protected function sendRequest($methodName, array $params = array())
+    protected function sendRequest($methodName, array $params = array(),
+        $apiKey = '')
     {
-        if (strlen($this->apiKey) > 0) {
-            $host = $this->apiKey . '.' . $this->apiServer;
-        } else {
+        if ($apiKey == '') {
             $host = $this->apiServer;
+        } else {
+            $host = $apiKey . '.' . $this->apiServer;
         }
 
         $url = sprintf('http://%s:%s/%s/%s',
