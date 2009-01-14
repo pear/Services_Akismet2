@@ -358,22 +358,6 @@ class Services_Akismet2_Comment
     }
 
     // }}}
-    // {{{ getFields()
-
-    /**
-     * Gets the fields that are set for this comment
-     *
-     * Note: This method does not include extra server-related fields that are
-     * included in {@link Services_Akismet2_Comment::getPostParameters()}.
-     *
-     * @return array an array containing the fields set for this comment.
-     */
-    public function getFields()
-    {
-        return $this->fields;
-    }
-
-    // }}}
     // {{{ setType()
 
     /**
