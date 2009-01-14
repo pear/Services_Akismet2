@@ -54,6 +54,7 @@ require_once 'PHPUnit/Framework/TestSuite.php';
 require_once 'PHPUnit/TextUI/TestRunner.php';
 require_once 'TestCase.php';
 require_once 'CommentTestCase.php';
+require_once 'ExceptionsTestCase.php';
 
 /**
  * AllTests suite testing Services_Akismet2
@@ -82,6 +83,7 @@ class Services_Akismet2_AllTests
         $suite = new PHPUnit_Framework_TestSuite('Services_Akismet2 Tests');
         $suite->addTestSuite('Services_Akismet2_TestCase');
         $suite->addTestSuite('Services_Akismet2_CommentTestCase');
+        $suite->addTestSuite('Services_Akismet2_ExceptionsTestCase');
         return $suite;
     }
 
