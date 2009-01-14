@@ -147,7 +147,8 @@ class Services_Akismet2_CommentTestCase extends PHPUnit_Framework_TestCase
         $comment = new Services_Akismet2_Comment();
 
         $comment->$methodName($value);
-        $fields = $comment->getFields();
+
+        $fields = $this->readAttribute($comment, 'fields');
 
         $this->assertArrayHasKey($fieldName, $fields);
         $this->assertEquals($value, $fields[$fieldName]);
@@ -204,9 +205,13 @@ class Services_Akismet2_CommentTestCase extends PHPUnit_Framework_TestCase
             'user_agent'
         );
 
-        $fields = $comment->getFields();
         foreach ($fieldNames as $fieldName) {
-            $this->assertArrayNotHasKey($fieldName, $fields);
+            $constraint = $this->attribute(
+                $this->logicalNot(
+                    $this->arrayHasKey($fieldName)
+                ), 'fields'
+            );
+            $this->assertThat($comment, $constraint);
         }
     }
 
@@ -229,8 +234,7 @@ class Services_Akismet2_CommentTestCase extends PHPUnit_Framework_TestCase
 
         $comment = new Services_Akismet2_Comment($fields);
 
-        $commentFields = $comment->getFields();
-        $this->assertEquals($fields, $commentFields);
+        $this->assertAttributeEquals($fields, 'fields', $comment);
     }
 
     // }}}
@@ -250,8 +254,7 @@ class Services_Akismet2_CommentTestCase extends PHPUnit_Framework_TestCase
 
         $comment = new Services_Akismet2_Comment($fields);
 
-        $commentFields = $comment->getFields();
-        $this->assertEquals($fields, $commentFields);
+        $this->assertAttributeEquals($fields, 'fields', $comment);
     }
 
     // }}}
@@ -452,7 +455,8 @@ class Services_Akismet2_CommentTestCase extends PHPUnit_Framework_TestCase
         $comment = new Services_Akismet2_Comment();
 
         $comment->setField($name, $value);
-        $fields = $comment->getFields();
+
+        $fields = $this->readAttribute($comment, 'fields');
 
         $this->assertArrayHasKey($name, $fields);
         $this->assertEquals($value, $fields[$name]);
