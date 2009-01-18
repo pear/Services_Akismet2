@@ -44,8 +44,6 @@
  * @link      http://pear.php.net/package/Services_Akismet2
  */
 
-chdir(dirname(__FILE__));
-
 if (!defined('PHPUnit_MAIN_METHOD')) {
     define('PHPUnit_MAIN_METHOD', 'Services_Akismet2_AllTests::main');
 }
