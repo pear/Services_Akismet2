@@ -79,7 +79,7 @@ $description =
 $package = new PEAR_PackageFileManager2();
 
 $package->setOptions(array(
-    'filelistgenerator'     => 'cvs',
+    'filelistgenerator'     => 'svn',
     'simpleoutput'          => true,
     'baseinstalldir'        => '/',
     'packagedirectory'      => './',
