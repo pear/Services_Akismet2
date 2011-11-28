@@ -12,7 +12,7 @@
  *
  * LICENSE:
  *
- * Copyright (c) 2008 silverorange
+ * Copyright (c) 2008-2011 silverorange
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -35,7 +35,7 @@
  * @category  Services
  * @package   Services_Akismet2
  * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2008 silverorange
+ * @copyright 2008-2011 silverorange
  * @license   http://www.opensource.org/licenses/mit-license.html MIT License
  * @version   CVS: $Id$
  * @link      http://pear.php.net/package/Services_Akismet2
@@ -92,20 +92,10 @@ class Services_Akismet2_TestCase extends PHPUnit_Framework_TestCase
     protected $mock = null;
 
     // }}}
-    // {{{ private properties
-
-    /**
-     * @var integer
-     */
-    private $_oldErrorLevel;
-
-    // }}}
     // {{{ setUp()
 
     public function setUp()
     {
-        $this->_oldErrorLevel = error_reporting(E_ALL | E_STRICT);
-
         $this->mock = new HTTP_Request2_Adapter_Mock();
 
         $request = new HTTP_Request2();
@@ -122,7 +112,6 @@ class Services_Akismet2_TestCase extends PHPUnit_Framework_TestCase
     {
         unset($this->akismet);
         unset($this->mock);
-        error_reporting($this->_oldErrorLevel);
     }
 
     // }}}
