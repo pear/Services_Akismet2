@@ -5,9 +5,9 @@
 /**
  * Exception class test cases for the Services_Akismet2 package
  *
- * These tests require the PHPUnit 3.2 package to be installed. PHPUnit is
- * installable using PEAR. See the
- * {@link http://www.phpunit.de/pocket_guide/3.2/en/installation.html manual}
+ * These tests require the PHPUnit 3.6 or greater package to be installed.
+ * PHPUnit is installable using PEAR. See the
+ * {@link http://www.phpunit.de/manual/3.6/en/installation.html manual}
  * for detailed installation instructions.
  *
  * LICENSE:
