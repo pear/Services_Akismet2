@@ -3,11 +3,11 @@
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
 /**
- * PHPUnit 3.2 AllTests suite for the Services_Akismet2 package.
+ * PHPUnit AllTests suite for the Services_Akismet2 package.
  *
- * These tests require the PHPUnit 3.2 package to be installed. PHPUnit is
- * installable using PEAR. See the
- * {@link http://www.phpunit.de/pocket_guide/3.2/en/installation.html manual}
+ * These tests require the PHPUnit 3.6 or greater package to be installed.
+ * PHPUnit is installable using PEAR. See the
+ * {@link http://www.phpunit.de/manual/3.6/en/installation.html manual}
  * for detailed installation instructions.
  *
  * This test suite follows the PEAR AllTests conventions as documented at
@@ -15,7 +15,7 @@
  *
  * LICENSE:
  *
- * Copyright (c) 2008 silverorange
+ * Copyright (c) 2008-2011 silverorange
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -38,7 +38,7 @@
  * @category  Services
  * @package   Services_Akismet2
  * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2008 silverorange
+ * @copyright 2008-2011 silverorange
  * @license   http://www.opensource.org/licenses/mit-license.html MIT License
  * @version   CVS: $Id$
  * @link      http://pear.php.net/package/Services_Akismet2
@@ -59,7 +59,7 @@ require_once 'ExceptionsTestCase.php';
  * @category  Services
  * @package   Services_Akismet2
  * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2008 silverorange
+ * @copyright 2008-2011 silverorange
  * @license   http://www.opensource.org/licenses/mit-license.html MIT License
  * @link      http://pear.php.net/package/Services_Akismet2
  */
