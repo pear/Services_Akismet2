@@ -12,7 +12,7 @@
  *
  * LICENSE:
  *
- * Copyright (c) 2007-2008 Bret Kuhns, silverorange
+ * Copyright (c) 2007-2011 Bret Kuhns, silverorange
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -35,16 +35,11 @@
  * @category  Services
  * @package   Services_Akismet2
  * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2008 silverorange
+ * @copyright 2008-2011 silverorange
  * @license   http://www.opensource.org/licenses/mit-license.html MIT License
  * @version   CVS: $Id$
  * @link      http://pear.php.net/package/Services_Akismet2
  */
-
-/**
- * PHPUnit3 framework
- */
-require_once 'PHPUnit/Framework.php';
 
 /**
  * For testing HTTP exceptions.
@@ -72,7 +67,7 @@ require_once 'Services/Akismet2/InvalidCommentException.php';
  * @category  Services
  * @package   Services_Akismet2
  * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2008 silverorange
+ * @copyright 2008-2011 silverorange
  * @license   http://www.opensource.org/licenses/mit-license.html MIT License
  * @link      http://pear.php.net/package/Services_Akismet2
  */

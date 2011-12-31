@@ -42,11 +42,6 @@
  */
 
 /**
- * PHPUnit3 framework
- */
-require_once 'PHPUnit/Framework.php';
-
-/**
  * Akismet class to test
  */
 require_once 'Services/Akismet2.php';
@@ -76,7 +71,7 @@ require_once 'HTTP/Request2/Adapter/Mock.php';
  * @category  Services
  * @package   Services_Akismet2
  * @author    Michael Gauthier <mike@silverorange.com>
- * @copyright 2008 silverorange
+ * @copyright 2008-2011 silverorange
  * @license   http://www.opensource.org/licenses/mit-license.html MIT License
  * @link      http://pear.php.net/package/Services_Akismet2
  */
