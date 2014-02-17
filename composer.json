@@ -16,12 +16,12 @@
     ],
     "require": {
         "php": ">=5.2.1",
-        "pear/http_request2": ">=0.1.0",
+        "pear/http_request2": "*",
         "pear/pear_exception": "*"
     },
     "autoload": {
         "psr-0": {
-            "Services_Akismet2": ""
+            "Services": "./"
         }
     },
     "include-path": [
